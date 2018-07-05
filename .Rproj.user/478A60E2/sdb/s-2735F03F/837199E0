@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "prep_service_file <- function(data){\n  \n  # Adding service aggregates to student list\n  stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), num_serv = length(Student.ID), service_date = tail(Support.Date, n =1 ))\n  \n  afterschool_hours <- data %>% group_by(Student.ID) %>% filter(Activity == \"21st Century Afterschool\") %>% summarise(afterschool_hours = sum(Hours))\n  \n  previous_months_service <- data %>% group_by(Student.ID) %>% filter(month(Support.Date) == month(Sys.Date())-1) %>% summarise(previous_months_service = sum(Hours))\n  month_serv <- data %>% group_by(Student.ID) %>% summarise(month_serv = length(unique(month(Support.Date))))  \n  #month_serv <- as.numeric(unlist(month_serv))\n  \n  \n  stserv <- merge(stserv, afterschool_hours, all = T)\n  stserv <- merge(stserv, previous_months_service, all = T)\n  stserv <- merge(stserv, month_serv, all = T)\n  \n  \n  \n  stserv$non_afterschool_hours <- stserv$Hours - stserv$afterschool_hours\n  \n  \n  stserv$avg_month_serv <- stserv$Hours / stserv$month_serv\n  #checkcounts <- data[data$checkin != 0 , ] %>% group_by(Student.ID) %>% summarize(num_check = n())\n  #parentcounts <- data[data$parent1on1 != 0, ] %>% group_by(Student.ID) %>% summarize(num_parent1on1 = n())\n  #anyfamcounts <- data[data$anyfamily != 0, ] %>% group_by(Student.ID) %>% summarize(num_anyfamily = n())\n  \n  \n  return(stserv)\n  \n  \n}",
+    "created" : 1530815816876.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3440560734",
+    "id" : "837199E0",
+    "lastKnownWriteTime" : 1530816810,
+    "last_content_update" : 1530816810415,
+    "path" : "~/Code/CIS2017-18/cis_webapp/service_prep.r",
+    "project_path" : "service_prep.r",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

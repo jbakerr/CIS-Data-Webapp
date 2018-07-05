@@ -1,0 +1,10 @@
+name: cis_webapp
+title:
+username:
+account: cisdurham
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 374793
+bundleId: 1466971
+url: https://cisdurham.shinyapps.io/cis_webapp/
+when: 1530825484.11672

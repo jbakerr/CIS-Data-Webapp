@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\nui <- fluidPage(\n  fluidPage(\n    titlePanel(\"Uploading Files\"),\n    sidebarLayout(\n      sidebarPanel(\n        fileInput('tier1', 'Upload Tier 1 File',\n                  accept=c('xlsx', \n                           'text/comma-separated-values,text/plain', \n                           '.xlsx')),\n        fileInput('site_coordination', 'Upload Site Coordination File',\n                  accept=c('xlsx', \n                           'text/comma-separated-values,text/plain', \n                           '.xlsx')),\n        fileInput('services', 'Upload Services File',\n                  accept=c('xlsx', \n                           'text/comma-separated-values,text/plain', \n                           '.xlsx')),\n        fileInput('caselist', 'Upload Caselist File',\n                  accept=c('xlsx', \n                           'text/comma-separated-values,text/plain', \n                           '.xlsx')),\n        fileInput('progress', 'Upload Progress Monitoring File',\n                  accept=c('xlsx', \n                           'text/comma-separated-values,text/plain', \n                           '.xlsx')),\n        downloadButton('download_tier1', 'Download Tier 1 Data'),\n        downloadButton('download_site_coordination', 'Download Site Coordination'),\n        downloadButton('download_services', 'Download Service File'),\n        downloadButton('download_studentlist', 'Download Studentlist File')\n        \n      ),\n      mainPanel(\n        tableOutput('contents')\n      )\n    )\n  )\n)",
+    "created" : 1527990944618.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3790553219",
+    "id" : "C10AAE26",
+    "lastKnownWriteTime" : 1530813592,
+    "last_content_update" : 1530813592570,
+    "path" : "~/Code/CIS2017-18/cis_webapp/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

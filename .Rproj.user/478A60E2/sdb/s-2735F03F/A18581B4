@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "options(java.parameters = \"-Xmx1024m\")\n\nlibrary(plyr) # ****IMPORTANT**** Load plyr before dplyr- they have some of the same named functions, and if you load in a different order it will cause problems\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(XLConnect)\nlibrary(lubridate)\nlibrary(shiny)\n\n#Setting Vectors that will be used throughout program\nmetrics <- c(\"Math\",\"Science\",\"ELA\", \"Suspensions\", \"Attendance Rate\")\n\nelem <- c(\"Glenn Elementary School\", \"Eno Valley Elementary\", \"EK Powe Elementary School\", \"Merrick-Moore\")\nhigh <- c(\"Shepard\", \"Durham Performance Learning Center\", \"Hillside High School\", \"Southern High School\", \"Northern\")\n\n\nrunApp()\n\n",
+    "created" : 1527991568409.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1102627813",
+    "id" : "A18581B4",
+    "lastKnownWriteTime" : 1530825248,
+    "last_content_update" : 1530825248568,
+    "path" : "~/Code/CIS2017-18/cis_webapp/app.r",
+    "project_path" : "app.r",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
