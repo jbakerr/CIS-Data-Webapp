@@ -5,6 +5,9 @@ service_script <- function(data){
   # **** IMPORTANT ***** delete the last row that sums all hours before saving the excel file. That row will cause problems
   #data<-('services.csv', skip = 4, header = T)
   # xlsxFile <- system.file("/Volumes/GoogleDrive/My Drive/Data Files/services.xlsx", package = "openxlsx")
+  data$Entry.Date <- convertToDate(data$Entry.Date)
+  data$Support.Date <- convertToDate(data$Support.Date)
+  
   data <- data.frame(apply(data, 2, function(x) gsub("^$|^ $", NA, x)))
   
   data  <- data[,colSums(is.na(data))<nrow(data)]

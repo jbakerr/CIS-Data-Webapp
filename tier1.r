@@ -1,5 +1,6 @@
 tier1_script <- function(tier1){
 
+  tier1$Entry.Date <- convertToDate(tier1$Entry.Date)
   tier1 <- data.frame(apply(tier1, 2, function(x) gsub("^$|^ $", NA, x)))
   tier1  <- tier1[,colSums(is.na(tier1))<nrow(tier1)]
   

@@ -8,10 +8,10 @@ source('service_prep.r', local = T)
 library(plyr) # ****IMPORTANT**** Load plyr before dplyr- they have some of the same named functions, and if you load in a different order it will cause problems
 library(dplyr)
 library(tidyr)
-library(XLConnect)
+# library(XLConnect)
 library(lubridate)
 library(shiny)
-
+library(openxlsx)
 
 server <- function(input, output) {
   
@@ -20,8 +20,8 @@ server <- function(input, output) {
     
     if(is.null(caselist))
       return(NULL)
-    
-    caselist <- readWorksheetFromFile(caselist$datapath, sheet = 1, header = T, startRow = 2)
+   
+    caselist <- read.xlsx(caselist$datapath, sheet = 1, colNames = T, startRow = 2, detectDates = T)
     caselist <- caselist_script(caselist)
     return(caselist)
 
@@ -35,8 +35,8 @@ server <- function(input, output) {
     if(is.null(progress))
       return(NULL)
     
+    progress <- read.xlsx(progress$datapath, sheet = 1, colNames = T, startRow = 1, detectDates = T)
     
-    progress <-readWorksheetFromFile(progress$datapath, sheet = 1, header = T, startRow = 1)
     progress <- progress_import_script(progress)
     
     return(progress)
@@ -51,7 +51,8 @@ server <- function(input, output) {
     if(is.null(services))
       return(NULL)
     
-    services <- readWorksheetFromFile(services$datapath, sheet = 1, header = T, startRow = 2)
+    services <- read.xlsx(services$datapath, sheet = 1, colNames = T, startRow = 2)
+
     
     services <- service_script(services)
     return(services)
@@ -69,13 +70,12 @@ server <- function(input, output) {
     if (is.null(input$tier1))
       return(NULL)
 
+    tier1_df <- read.xlsx(tier1$datapath, sheet = 1, colNames = T, startRow = 2)
     
-    tier1_df <- readWorksheetFromFile(tier1$datapath, sheet=1, header = T, startRow = 2)
-    return(tier1_df)
     
     tier1_df <- tier1_script(tier1_df)
     
-  
+    return(tier1_df)
     
   })
   
@@ -88,8 +88,7 @@ server <- function(input, output) {
       return(NULL)
     
 
-    
-    site_coordination_df <- readWorksheetFromFile(site_coordination$datapath, sheet=1, header = T, startRow = 1)
+    site_coordination_df <- read.xlsx(site_coordination$datapath, sheet = 1, colNames = T, startRow = 1, detectDates = T)
     site_coordination_df <- site_coordination_script(site_coordination_df)
     
     
@@ -114,11 +113,11 @@ server <- function(input, output) {
   }
   
   
-  output$contents <- renderTable(
+  # output$contents <- renderTable(
+  #   
+  #   getData_tier1()
     
-    getData_tier1()
-    
-  )
+  # )
   
   output$download_tier1 <- downloadHandler(
     filename = function() {

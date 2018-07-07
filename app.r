@@ -3,9 +3,10 @@ options(java.parameters = "-Xmx1024m")
 library(plyr) # ****IMPORTANT**** Load plyr before dplyr- they have some of the same named functions, and if you load in a different order it will cause problems
 library(dplyr)
 library(tidyr)
-library(XLConnect)
+# library(XLConnect)
 library(lubridate)
 library(shiny)
+library(openxlsx)
 
 #Setting Vectors that will be used throughout program
 metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")
