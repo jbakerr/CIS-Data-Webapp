@@ -154,12 +154,12 @@ studentlist_script <- function(stlist){
 
 
   metrics_colums <- c("Q1_Science", "Q1_Math", "Q1_ELA","Q1_Suspensions", "Q1_Attendance Rate","Q2_Science", "Q2_Math", "Q2_ELA","Q2_Suspensions", "Q2_Attendance Rate","Q3_Science", "Q3_Math", "Q3_ELA","Q3_Suspensions", "Q3_Attendance Rate", "Q4_Science", "Q4_Math", "Q4_ELA","Q4_Suspensions", "Q4_Attendance Rate")
-
-  stlist$no_metrics <- (rowSums(is.na(stlist[, metrics_colums])) == length(metrics_colums))
-  stlist$no_metrics_Q1 <- (rowSums(is.na(stlist[, metrics_colums[1:5]])) == length(metrics_colums[1:5]))
-  stlist$no_metrics_Q2 <- (rowSums(is.na(stlist[, metrics_colums[6:10]])) == length(metrics_colums[6:10]))
-  stlist$no_metrics_Q3 <- (rowSums(is.na(stlist[, metrics_colums[11:15]])) == length(metrics_colums[11:15]))
-  stlist$no_metrics_Q4 <- (rowSums(is.na(stlist[, metrics_colums[16:20]])) == length(metrics_colums[16:20]))
+  
+  stlist$no_metrics_Q1 <- (rowSums(is.na(stlist[, metrics_colums[1:5]])) > 1 )
+  stlist$no_metrics_Q2 <- (rowSums(is.na(stlist[, metrics_colums[6:10]])) > 1 )
+  stlist$no_metrics_Q3 <- (rowSums(is.na(stlist[, metrics_colums[11:15]])) > 1 )
+  stlist$no_metrics_Q4 <- (rowSums(is.na(stlist[, metrics_colums[16:20]])) > 1)
+  stlist$no_metrics <- apply(stlist[,66:69], 1, any)
 
 
 # 

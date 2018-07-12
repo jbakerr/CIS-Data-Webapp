@@ -7,6 +7,7 @@ library(tidyr)
 library(lubridate)
 library(shiny)
 library(openxlsx)
+library(rsconnect)
 
 #Setting Vectors that will be used throughout program
 metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")

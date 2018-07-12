@@ -5,13 +5,14 @@ source('caselist.r', local = T)
 source('progress_monitoring.r', local = T)
 source('studentlist.r', local = T)
 source('service_prep.r', local = T)
+source('functions.r', local = T)
 library(plyr) # ****IMPORTANT**** Load plyr before dplyr- they have some of the same named functions, and if you load in a different order it will cause problems
 library(dplyr)
 library(tidyr)
-# library(XLConnect)
 library(lubridate)
 library(shiny)
 library(openxlsx)
+
 
 server <- function(input, output) {
   
@@ -97,7 +98,22 @@ server <- function(input, output) {
     
   })
   
+  getData_studentlist <- reactive({
+    
+    studentlist <- input$studentlist
+    
+    if (is.null(input$studentlist))
+      return(NULL)
+    studentlist <- read.csv(studentlist$datapath, header = T)
+    
+    return(studentlist)
+    
+  })
+  
+  
   studentlist_creation <- function(caselist, progress, data){
+    
+    req(input$services, input$caselist, input$progress)
     
     studentlist <-merge(caselist, progress, by = "Student.ID", all = T)
 
@@ -112,6 +128,21 @@ server <- function(input, output) {
     
   }
   
+  studentlist_check <- function(caselist, progress, data){
+    if(!is.null(getData_studentlist())){
+      studentlist <- getData_studentlist()
+      return(studentlist)
+    }
+    else if(!is.null(studentlist_creation(caselist, progress, data))){
+      studentlist <- studentlist_creation(caselist, progress, data)
+      return(studentlist)
+    }
+    else{
+      return(FALSE)}
+  }
+    
+    
+
   
   # output$contents <- renderTable(
   #   
@@ -146,6 +177,8 @@ server <- function(input, output) {
     }
   )
   
+  
+  
   output$download_studentlist <- downloadHandler(
     filename = function() {
       paste("studentlist", ".csv", sep = "")
@@ -155,5 +188,40 @@ server <- function(input, output) {
     }
   )
   
+  output$student_table <- renderTable({
+    studentlist <- studentlist_check(getData_caselist(), getData_progress(), getData_services())
+    subsetted_df <- select(filter(studentlist, School == input$school),c(Student, Hours))
+    subsetted_df <- subsetted_df[order(subsetted_df$Hours, decreasing = T),]
+    head_tail(subsetted_df)
+    
+    
+    
+    
+  })
   
+  output$service_table <- renderTable({
+    service_list <- getData_services()
+    subseted_services <- select(filter(service_list, Home.School == input$school),c(Student.Support.Category, Student.Support.Name, hoursspent))
+    aggregate(subseted_services$hoursspent, by=list(Category=subseted_services$Student.Support.Name), FUN=sum)
+    
+    
+    
+    
+    
+  })
+  
+  output$setup_table <- renderTable({
+    studentlist <- studentlist_check(getData_caselist(), getData_progress(), getData_services())
+    
+    select(filter(studentlist, School == input$school & error == TRUE),c(Student))
+    
+    
+  })
+  
+  output$missing_grades_table <- renderTable({
+    studentlist <- studentlist_check(getData_caselist(), getData_progress(), getData_services())
+    select(filter(studentlist, School == input$school & no_metrics == TRUE),c(Student, no_metrics, no_metrics_Q1, no_metrics_Q2, no_metrics_Q3, no_metrics_Q4))
+    
+    
+  })
 }
