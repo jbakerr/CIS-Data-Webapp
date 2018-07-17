@@ -3,7 +3,7 @@ caselist_script <- function(caselist){
   
   #caselist<-read.csv('caselist.csv', skip = 3, header = T, sep = ",")
 
-  caselist$Birth.Date <- convertToDate(caselist$Birth.Date)
+  # caselist$Birth.Date <- convertToDate(caselist$Birth.Date)
   
   caselist <- data.frame(apply(caselist, 2, function(x) gsub("^$|^ $", NA, x)))
   

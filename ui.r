@@ -1,13 +1,27 @@
-source('instructions.r', local = T)
+########################### Set up environment #################################
 library(markdown)
+library(plyr) 
+library(dplyr)
+library(lubridate)
+library(shiny)
+library(openxlsx)
+library(rsconnect)
 
+# Pull additional scripts to be used during process ----------------------------
+source('instructions.r', local = T)
+
+
+# Start ui function ------------------------------------------------------------
 
 ui <- fluidPage(
   fluidPage(
     img(src = "logo.png", height = 102, width = 102),
     titlePanel("Communities In Schools of Durham Data Process Manager"),
     navbarPage("Data Manager",
+# Start Page -------------------------------------------------------------------
+               
     tabPanel("Start", 
+# Start Page Side Bar UI--------------------------------------------------------
       sidebarLayout(
         sidebarPanel(
           fileInput('tier1', 'Upload Tier 1 File',
@@ -36,13 +50,16 @@ ui <- fluidPage(
                              '.xlsx')),
           downloadButton('download_tier1', 'Download Tier 1 Data'),
           br(),
-          downloadButton('download_site_coordination', 'Download Site Coordination'),
+          downloadButton(
+            'download_site_coordination', 'Download Site Coordination'
+            ),
           br(),
           downloadButton('download_services', 'Download Service File'),
           br(),
           downloadButton('download_studentlist', 'Download Studentlist File')
           
         ),
+# Start Page Main Panel UI------------------------------------------------------
         mainPanel(
           
          includeMarkdown("md/instructions.md")
@@ -54,21 +71,43 @@ ui <- fluidPage(
         
   
       ),
+# Reports Page -----------------------------------------------------------------
     tabPanel("Reports", 
+# Reports Side Bar UI-----------------------------------------------------------
              sidebarLayout(
                sidebarPanel(
-                 selectInput('school', 'School',
-                             choices = c("EK Powe Elementary School", "Eno Valley Elementary", "Glenn Elementary School", "Merrick-Moore", "Shepard"))
+                 uiOutput("choose_school")
                  
+                 # selectInput('school', 'School',
+                 #             choices = c(
+                 #               "EK Powe Elementary School", 
+                 #               "Eno Valley Elementary", 
+                 #               "Glenn Elementary School", 
+                 #               "Merrick-Moore", "Shepard")
+                 #             )
+                 # 
                  
                ),
+# Reports Main Panel UI---------------------------------------------------------
                mainPanel(
-                 
+# Reports Main Panel Tabs UI----------------------------------------------------
                  tabsetPanel(type = 'tabs',
-                             tabPanel('Students', includeMarkdown("md/student_explanation.md"), tableOutput('student_table')),
-                             tabPanel('Services',includeMarkdown("md/service_explanation.md"), tableOutput('service_table')),
-                             tabPanel('Set Up', includeMarkdown("md/setup_explanation.md"), tableOutput('setup_table')),
-                             tabPanel('Missing Grades', includeMarkdown("md/metric_explanation.md"), tableOutput('missing_grades_table'))
+                             tabPanel(
+                               'Students', 
+                               includeMarkdown("md/student_explanation.md"), 
+                               tableOutput('student_table')),
+                             tabPanel(
+                               'Services',
+                               includeMarkdown("md/service_explanation.md"),
+                               tableOutput('service_table')),
+                             tabPanel(
+                               'Set Up', 
+                               includeMarkdown("md/setup_explanation.md"),
+                               tableOutput('setup_table')),
+                             tabPanel(
+                               'Missing Grades', 
+                               includeMarkdown("md/metric_explanation.md"), 
+                               tableOutput('missing_grades_table'))
                              
                )
              )
