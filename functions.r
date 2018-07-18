@@ -1,31 +1,35 @@
 
 
-check_studentlist <- function(){
+check_studentlist <- function(input){
   
-  if (is.null(input$caselist))
-    return(FALSE)
-  else if (is.null(input$services))
-    return(FALSE)
-  else if (is.null(input$progress))
-    return(FALSE)
-  else if (is.null(input$studentlist))
-    return(FALSE)
-  else{
+  if(!is.null(input$studentlist)){
     return(TRUE)
+  }
+  else{
+    if (is.null(input$caselist)){
+      return(FALSE)
+    }
+    else if (is.null(input$services)){
+      return(FALSE)
+    }
+    else if (is.null(input$progress)){
+      return(FALSE)
+    }
+    else{
+      return(TRUE)
+    }
   }
 }
 
-
 head_tail <- function(dataframe, head_number=5, tail_number=head_number){
-  # print the head and tail together
+# print the head and tail together
   list(High = head(dataframe,head_number), Low = tail(dataframe,tail_number))
 }
 
 
 studentlist_creation <- function(caselist, progress, data){
   
-  # req(input$services, input$caselist, input$progress)
-  
+
   studentlist <-merge(caselist, progress, by = "Student.ID", all = T)
   
   stserv <- prep_service_file(data)
@@ -68,7 +72,11 @@ school_options <- function(caselist, studentlist, services){
     return(schools)
   }
   else{
-    return()
+    return(NULL)
   }
   
 }
+
+studentlist_error_code <- "Please upload either a generated studentlist file or the required files to generate a studentlist file."
+
+services_error_code <- "Please upload the services file."

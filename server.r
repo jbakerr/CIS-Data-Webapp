@@ -23,6 +23,8 @@ server <- function(input, output) {
 # Input functions --------------------------------------------------------------
   
   getData_caselist <- reactive({
+    
+
     caselist <- input$caselist
     
     if(is.null(caselist))
@@ -128,6 +130,12 @@ server <- function(input, output) {
 # UI Display Functions ---------------------------------------------------------
   
   output$choose_school <- renderUI({
+    validate(
+      need(
+        check_studentlist(input) == TRUE, studentlist_error_code)
+        
+    )
+    
     caselist <- getData_caselist()
     services <- getData_services()
     studentlist <- getData_studentlist()
@@ -176,7 +184,8 @@ server <- function(input, output) {
   
   
   output$download_studentlist <- downloadHandler(
-    
+
+  
     filename = function() {
       paste("studentlist", ".csv", sep = "")
     },
@@ -196,7 +205,10 @@ server <- function(input, output) {
       return(NULL)
     }
     
-    
+    # validate(
+    #   need(
+    #     check_studentlist(input) == TRUE, studentlist_error_code)
+    # )
     
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(),
@@ -216,21 +228,32 @@ server <- function(input, output) {
   })
   
   output$service_table <- renderTable({
+    
+    # validate(
+    #   need(input$services, services_error_code)
+    # )
+    # 
     service_list <- getData_services()
-    school <- names(get(input$school))
     subseted_services <- select(
       filter(service_list, Home.School == input$school),
       c(Student.Support.Category, Student.Support.Name, hoursspent)
       )
-    aggregate(
+    service_table <- aggregate(
       subseted_services$hoursspent, 
       by=list(Category=subseted_services$Student.Support.Name), FUN=sum
       )
     
+    service_table
+    
   })
   
   output$setup_table <- renderTable({
-
+   
+     # validate(
+     #  need(
+     #    check_studentlist(input) == TRUE, studentlist_error_code)
+     #  )
+     # 
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(), 
       getData_studentlist()
@@ -245,6 +268,11 @@ server <- function(input, output) {
   
   output$missing_grades_table <- renderTable({
 
+    # validate(
+    #   need(
+    #     check_studentlist(input) == TRUE, studentlist_error_code)
+    #   )
+    
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(), 
       getData_studentlist()
@@ -257,5 +285,10 @@ server <- function(input, output) {
     
     
   })
+  
+
+  
+  
 }
+
 

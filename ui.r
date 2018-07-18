@@ -14,6 +14,15 @@ source('instructions.r', local = T)
 # Start ui function ------------------------------------------------------------
 
 ui <- fluidPage(
+  
+  tags$head(
+    tags$style(HTML("
+                    .shiny-output-error-validation {
+                    color: red;
+                    }
+                    "))
+    ),
+  
   fluidPage(
     img(src = "logo.png", height = 102, width = 102),
     titlePanel("Communities In Schools of Durham Data Process Manager"),
@@ -77,16 +86,6 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  uiOutput("choose_school")
-                 
-                 # selectInput('school', 'School',
-                 #             choices = c(
-                 #               "EK Powe Elementary School", 
-                 #               "Eno Valley Elementary", 
-                 #               "Glenn Elementary School", 
-                 #               "Merrick-Moore", "Shepard")
-                 #             )
-                 # 
-                 
                ),
 # Reports Main Panel UI---------------------------------------------------------
                mainPanel(
