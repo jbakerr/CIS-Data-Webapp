@@ -149,6 +149,15 @@ server <- function(input, output) {
     
   }
   )
+# Download Output Functions ----------------------------------------------------
+  
+  output$validate_inputs <- renderText({
+    validate(
+      need(check_studentlist(input) == TRUE, studentlist_error_code)
+    )
+    
+    
+  })
   
   
   
@@ -201,14 +210,17 @@ server <- function(input, output) {
 # Report Output Functions ------------------------------------------------------  
   
   output$student_table <- renderTable({
+    
+    validate(
+      need(
+        check_studentlist(input) == TRUE, studentlist_error_code)
+    )
+    
     if(is.null(input$school)){
       return(NULL)
     }
     
-    # validate(
-    #   need(
-    #     check_studentlist(input) == TRUE, studentlist_error_code)
-    # )
+
     
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(),
@@ -229,10 +241,10 @@ server <- function(input, output) {
   
   output$service_table <- renderTable({
     
-    # validate(
-    #   need(input$services, services_error_code)
-    # )
-    # 
+    validate(
+      need(input$services, services_error_code)
+    )
+
     service_list <- getData_services()
     subseted_services <- select(
       filter(service_list, Home.School == input$school),
@@ -248,12 +260,12 @@ server <- function(input, output) {
   })
   
   output$setup_table <- renderTable({
-   
-     # validate(
-     #  need(
-     #    check_studentlist(input) == TRUE, studentlist_error_code)
-     #  )
-     # 
+
+     validate(
+      need(
+        check_studentlist(input) == TRUE, studentlist_error_code)
+      )
+
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(), 
       getData_studentlist()
@@ -268,10 +280,10 @@ server <- function(input, output) {
   
   output$missing_grades_table <- renderTable({
 
-    # validate(
-    #   need(
-    #     check_studentlist(input) == TRUE, studentlist_error_code)
-    #   )
+    validate(
+      need(
+        check_studentlist(input) == TRUE, studentlist_error_code)
+      )
     
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(), 

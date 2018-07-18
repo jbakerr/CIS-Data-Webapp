@@ -77,6 +77,6 @@ school_options <- function(caselist, studentlist, services){
   
 }
 
-studentlist_error_code <- "Please upload either a generated studentlist file or the required files to generate a studentlist file."
+studentlist_error_code <- "Please upload either a generated studentlist file or the required files to proceed."
 
 services_error_code <- "Please upload the services file."

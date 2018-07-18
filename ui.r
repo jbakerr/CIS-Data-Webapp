@@ -71,7 +71,8 @@ ui <- fluidPage(
 # Start Page Main Panel UI------------------------------------------------------
         mainPanel(
           
-         includeMarkdown("md/instructions.md")
+         includeMarkdown("md/instructions.md"),
+         textOutput("validate_inputs")
         )
       )
       
