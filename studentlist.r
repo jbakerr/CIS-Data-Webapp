@@ -145,22 +145,70 @@ studentlist_script <- function(stlist){
                                      (stlist$max_criteria == 2 & (stlist$beh_criteria == F | stlist$course_criteria == F)), stlist$attend_criteria <- T, stlist$attend_criteria <- F)
 
 
+  
+  # Determining what quarters to include in metric check
+  
+  stlist$First.CIS.Enrollment.Date <- as.Date(stlist$First.CIS.Enrollment.Date)
+  
+  
+  start_year <-  as.integer(format(Sys.Date(), "%Y"))
+  
+  if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
+      as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
+    
+    start_year <- start_year
+  } else{
+    
+    start_year <- start_year - 1
+  }
+  
+  
+  Q1_date <- as.Date(paste(start_year, "-10-31", sep = ""))
+  Q2_date <- as.Date(paste(start_year + 1, "-01-15", sep = ""))
+  Q3_date <- as.Date(paste(start_year + 1, "-03-31", sep = ""))
+  Q4_date <- as.Date(paste(start_year + 1, "-06-10", sep = ""))
+  
+
+  
+  
   #Creates no-metric column
   stlist$no_metrics <- FALSE
   stlist$no_metrics_Q1 <- FALSE
   stlist$no_metrics_Q2 <- FALSE
   stlist$no_metrics_Q3 <- FALSE
   stlist$no_metrics_Q4 <- FALSE
-
-
+  
+  
   metrics_colums <- c("Q1_Science", "Q1_Math", "Q1_ELA","Q1_Suspensions", "Q1_Attendance Rate","Q2_Science", "Q2_Math", "Q2_ELA","Q2_Suspensions", "Q2_Attendance Rate","Q3_Science", "Q3_Math", "Q3_ELA","Q3_Suspensions", "Q3_Attendance Rate", "Q4_Science", "Q4_Math", "Q4_ELA","Q4_Suspensions", "Q4_Attendance Rate")
   
-  stlist$no_metrics_Q1 <- (rowSums(is.na(stlist[, metrics_colums[1:5]])) > 1 )
-  stlist$no_metrics_Q2 <- (rowSums(is.na(stlist[, metrics_colums[6:10]])) > 1 )
-  stlist$no_metrics_Q3 <- (rowSums(is.na(stlist[, metrics_colums[11:15]])) > 1 )
-  stlist$no_metrics_Q4 <- (rowSums(is.na(stlist[, metrics_colums[16:20]])) > 1)
+  stlist$no_metrics_Q1 <- ifelse(Sys.Date() > Q1_date & 
+                                   stlist$First.CIS.Enrollment.Date < Q1_date, 
+                                 stlist$no_metrics_Q1 <- (rowSums(is.na(stlist[, metrics_colums[1:5]])) > 1 ),
+                                 stlist$no_metrics_Q1 <- FALSE)
+  
+  
+  stlist$no_metrics_Q2 <- ifelse(Sys.Date() > Q2_date & 
+                                   stlist$First.CIS.Enrollment.Date < Q2_date, 
+                                 stlist$no_metrics_Q2 <- (rowSums(is.na(stlist[, metrics_colums[6:10]])) > 1 ),
+                                 stlist$no_metrics_Q2 <- FALSE)  
+  
+  
+  stlist$no_metrics_Q3 <- ifelse(Sys.Date() > Q3_date & 
+                                   stlist$First.CIS.Enrollment.Date < Q3_date, 
+                                 stlist$no_metrics_Q3 <- (rowSums(is.na(stlist[, metrics_colums[11:15]])) > 1 ),
+                                 stlist$no_metrics_Q3 <- FALSE)  
+  
+  stlist$no_metrics_Q4 <- ifelse(Sys.Date() > Q4_date & 
+                                   stlist$First.CIS.Enrollment.Date < Q4_date, 
+                                 stlist$no_metrics_Q4 <- (rowSums(is.na(stlist[, metrics_colums[16:20]])) > 1),
+                                 stlist$no_metrics_Q4 <- FALSE)  
+  
+  
+  
   stlist$no_metrics <- apply(stlist[,66:69], 1, any)
-
+  
+  
+  
 
 # 
 #   improve.math <- subset(stlist, stlist$School %in% high & (stlist$Q2_Math - stlist$Q1_Math) >= 10)

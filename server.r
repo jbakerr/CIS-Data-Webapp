@@ -291,7 +291,7 @@ server <- function(input, output) {
       )
     select(filter(
       studentlist, School == input$school & no_metrics == TRUE),
-      c(Student, no_metrics, no_metrics_Q1, 
+      c(Student, no_metrics_Q1, 
         no_metrics_Q2, no_metrics_Q3, no_metrics_Q4)
       )
     
