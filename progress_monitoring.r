@@ -1,6 +1,7 @@
 progress_import_script <- function(progress){
   #Load Student Progress Monitoring Excel Sheet
   
+  colnames(progress) <- make.names(colnames(progress))
   
   #Setting Vectors that will be used throughout program
   metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")

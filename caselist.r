@@ -2,6 +2,9 @@ caselist_script <- function(caselist){
   #Adding Caselist 
   
   #caselist<-read.csv('caselist.csv', skip = 3, header = T, sep = ",")
+  
+  colnames(caselist) <- make.names(colnames(caselist))
+  
 
   # caselist$Birth.Date <- convertToDate(caselist$Birth.Date)
   

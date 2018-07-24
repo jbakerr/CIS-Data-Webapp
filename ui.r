@@ -4,8 +4,9 @@ library(plyr)
 library(dplyr)
 library(lubridate)
 library(shiny)
-library(openxlsx)
+# library(openxlsx)
 library(rsconnect)
+library(readxl)
 
 # Pull additional scripts to be used during process ----------------------------
 source('instructions.r', local = T)

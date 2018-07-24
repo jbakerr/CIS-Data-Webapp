@@ -4,7 +4,8 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(shiny)
-library(openxlsx)
+# library(openxlsx)
+library(readxl)
 
 # Pull additional scripts to be used during process ----------------------------
 suppressWarnings(source("tier1.r", local = T))
@@ -30,9 +31,14 @@ server <- function(input, output) {
     if(is.null(caselist))
       return(NULL)
    
-    caselist <- read.xlsx(
-      caselist$datapath, sheet = 1, colNames = T, startRow = 2, detectDates = T
-      )
+    nms <- names(read_excel(caselist$datapath, n_max = 0))
+    
+  
+    ct <- ifelse(grepl("Date", nms), "date", "guess")
+    
+    caselist <- suppressWarnings(read_excel(caselist$datapath, sheet = 1,skip = 1, col_types = ct))
+      
+
     
     caselist <- caselist_script(caselist)
     return(caselist)
@@ -47,9 +53,13 @@ server <- function(input, output) {
     if(is.null(progress))
       return(NULL)
     
-    progress <- read.xlsx(
-      progress$datapath, sheet = 1, colNames = T, startRow = 1, detectDates = T
-      )
+    nms <- names(read_excel(progress$datapath, n_max = 0))
+    
+    
+    ct <- ifelse(grepl("Date", nms), "date", "guess")
+    
+    progress <- suppressWarnings(read_excel(progress$datapath, sheet = 1,skip = 0, col_types = ct))
+    
     
     progress <- progress_import_script(progress)
     
@@ -64,10 +74,13 @@ server <- function(input, output) {
     
     if(is.null(services))
       return(NULL)
+    nms <- names(read_excel(services$datapath, n_max = 0))
     
-    services <- read.xlsx(
-      services$datapath, sheet = 1, colNames = T, startRow = 2
-      )
+    
+    ct <- ifelse(grepl("Date", nms), "date", "guess")
+    
+    services <- suppressWarnings(read_excel(services$datapath, sheet = 1,skip = 1, col_types = ct))
+
 
     
     services <- service_script(services)
@@ -84,10 +97,14 @@ server <- function(input, output) {
 
     if (is.null(input$tier1))
       return(NULL)
+    
+    nms <- names(read_excel(tier1$datapath, n_max = 0))
+    
+    
+    ct <- ifelse(grepl("Date", nms), "date", "guess")
+    
+    tier1_df <- suppressWarnings(read_excel(tier1$datapath, sheet = 1,skip = 1, col_types = ct))
 
-    tier1_df <- read.xlsx(tier1$datapath, sheet = 1, colNames = T, startRow = 2)
-    
-    
     tier1_df <- tier1_script(tier1_df)
     
     return(tier1_df)
@@ -102,11 +119,15 @@ server <- function(input, output) {
     if (is.null(input$site_coordination))
       return(NULL)
     
+    nms <- names(read_excel(site_coordination$datapath, n_max = 0))
+    
+    
+    ct <- ifelse(grepl("Date", nms), "date", "guess")
+    
+    site_coordination_df <- suppressWarnings(read_excel(site_coordination$datapath, sheet = 1,skip = 0, col_types = ct))
+    
 
-    site_coordination_df <- read.xlsx(
-      site_coordination$datapath, sheet = 1, colNames = T, 
-      startRow = 1, detectDates = T
-      )
+
     site_coordination_df <- site_coordination_script(site_coordination_df)
     
     
