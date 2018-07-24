@@ -23,7 +23,14 @@ check_studentlist <- function(input){
 
 head_tail <- function(dataframe, head_number=5, tail_number=head_number){
 # print the head and tail together
-  list(High = head(dataframe,head_number), Low = tail(dataframe,tail_number))
+  head_display <- head(dataframe,head_number)
+  tail_display <- tail(dataframe,tail_number)
+  
+  colnames(head_display) <- c("Student", "High_Hours")
+  colnames(tail_display) <- c("Student", "Low_Hours")
+  
+  
+  list(head_display, tail_display)
 }
 
 

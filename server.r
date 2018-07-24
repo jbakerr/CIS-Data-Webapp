@@ -232,6 +232,7 @@ server <- function(input, output) {
       )
     
     subsetted_df <- subsetted_df[order(subsetted_df$Hours, decreasing = T),]
+    colnames(subsetted_df) <- c("Students", "Hours")
     
   
     head_tail(subsetted_df)
@@ -289,11 +290,14 @@ server <- function(input, output) {
       getData_caselist(), getData_progress(), getData_services(), 
       getData_studentlist()
       )
-    select(filter(
+    missing_grades_display <- select(filter(
       studentlist, School == input$school & no_metrics == TRUE),
       c(Student, no_metrics_Q1, 
         no_metrics_Q2, no_metrics_Q3, no_metrics_Q4)
       )
+    
+    colnames(missing_grades_display) <- c("Student", "Missing Q1", "Missing Q2", "Missing Q3", "Missing Q4")
+    missing_grades_display
     
     
   })

@@ -205,7 +205,7 @@ studentlist_script <- function(stlist){
   
   
   
-  stlist$no_metrics <- apply(stlist[,66:69], 1, any)
+  stlist$no_metrics <- apply(stlist[,68:71], 1, any)
   
   
   
