@@ -42,12 +42,12 @@ head_tail <- function(dataframe, head_number=5, tail_number=head_number){
 # Pulls the caselist, services, and progress monitoring files together to create
 # the student list file.
 
-studentlist_creation <- function(caselist, progress, data){
+studentlist_creation <- function(caselist, progress, services){
   
 
   studentlist <-merge(caselist, progress, by = "Student.ID", all = T)
   
-  stserv <- prep_service_file(data)
+  stserv <- prep_service_file(services)
   
   stlist <- merge(studentlist, stserv, by = "Student.ID", all = T)
   
