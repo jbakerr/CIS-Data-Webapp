@@ -1,4 +1,9 @@
+############################### Functions  #####################################
 
+
+
+# Checks to ensure studentlist file exist in a generated form, or all the
+# required files are uploaded to generate a student list file. 
 
 check_studentlist <- function(input){
   
@@ -21,8 +26,9 @@ check_studentlist <- function(input){
   }
 }
 
+# Creates a table for showing the students with the most and lease service hours
 head_tail <- function(dataframe, head_number=5, tail_number=head_number){
-# print the head and tail together
+
   head_display <- head(dataframe,head_number)
   tail_display <- tail(dataframe,tail_number)
   
@@ -33,6 +39,8 @@ head_tail <- function(dataframe, head_number=5, tail_number=head_number){
   list(head_display, tail_display)
 }
 
+# Pulls the caselist, services, and progress monitoring files together to create
+# the student list file.
 
 studentlist_creation <- function(caselist, progress, data){
   
@@ -50,7 +58,7 @@ studentlist_creation <- function(caselist, progress, data){
   
 }
 
-
+# Look into see if duplicating earlier function 
 studentlist_check <- function(caselist, progress, data, studentlist){
   if(!is.null(studentlist)){
     return(studentlist)
@@ -63,6 +71,8 @@ studentlist_check <- function(caselist, progress, data, studentlist){
     return(FALSE)}
 }
 
+# Generates a list of possible schools to select based on the inputed data sets
+# Selected schools will then alter the tables in the report section
 
 school_options <- function(caselist, studentlist, services){
   if(!is.null(services)){
@@ -83,6 +93,7 @@ school_options <- function(caselist, studentlist, services){
   }
   
 }
+
 
 studentlist_error_code <- "Please upload either a generated studentlist file or the required files to proceed."
 
