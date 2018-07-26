@@ -189,7 +189,6 @@ server <- function(input, output) {
     
   })
   
-  
 # Download Output Functions ----------------------------------------------------
   
   output$download_tier1 <- downloadHandler(
