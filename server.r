@@ -1,4 +1,5 @@
-########################### Set up environment #################################
+################################# Server  ######################################
+# Set up Environment -----------------------------------------------------------
 library(plyr)
 library(dplyr)
 library(tidyr)
@@ -36,7 +37,9 @@ server <- function(input, output) {
   
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
-    caselist <- suppressWarnings(read_excel(caselist$datapath, sheet = 1,skip = 1, col_types = ct))
+    caselist <- suppressWarnings(
+      read_excel(caselist$datapath, sheet = 1,skip = 1, col_types = ct)
+      )
       
 
     
@@ -58,7 +61,9 @@ server <- function(input, output) {
     
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
-    progress <- suppressWarnings(read_excel(progress$datapath, sheet = 1,skip = 0, col_types = ct))
+    progress <- suppressWarnings(
+      read_excel(progress$datapath, sheet = 1,skip = 0, col_types = ct)
+      )
     
     
     progress <- progress_import_script(progress)
@@ -79,17 +84,17 @@ server <- function(input, output) {
     
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
-    services <- suppressWarnings(read_excel(services$datapath, sheet = 1,skip = 1, col_types = ct))
+    services <- suppressWarnings(
+      read_excel(services$datapath, sheet = 1,skip = 1, col_types = ct)
+      )
 
 
     
     services <- service_script(services)
     return(services)
     
-    
   })
   
-
   
   getData_tier1 <- reactive({
     
@@ -103,7 +108,9 @@ server <- function(input, output) {
     
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
-    tier1_df <- suppressWarnings(read_excel(tier1$datapath, sheet = 1,skip = 1, col_types = ct))
+    tier1_df <- suppressWarnings(
+      read_excel(tier1$datapath, sheet = 1,skip = 1, col_types = ct)
+      )
 
     tier1_df <- tier1_script(tier1_df)
     
@@ -124,7 +131,9 @@ server <- function(input, output) {
     
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
-    site_coordination_df <- suppressWarnings(read_excel(site_coordination$datapath, sheet = 1,skip = 0, col_types = ct))
+    site_coordination_df <- suppressWarnings(
+      read_excel(site_coordination$datapath, sheet = 1,skip = 0, col_types = ct)
+      )
     
 
 
@@ -167,9 +176,9 @@ server <- function(input, output) {
     
       selectInput("school", "Select Schools", as.list(schools))
  
-    
   }
   )
+  
 # Download Output Functions ----------------------------------------------------
   
   output$validate_inputs <- renderText({
@@ -179,7 +188,6 @@ server <- function(input, output) {
     
     
   })
-  
   
   
 # Download Output Functions ----------------------------------------------------
@@ -212,7 +220,6 @@ server <- function(input, output) {
   )
   
   
-  
   output$download_studentlist <- downloadHandler(
 
   
@@ -241,7 +248,6 @@ server <- function(input, output) {
       return(NULL)
     }
     
-
     
     studentlist <- studentlist_check(
       getData_caselist(), getData_progress(), getData_services(),
@@ -257,7 +263,6 @@ server <- function(input, output) {
     
   
     head_tail(subsetted_df)
-    
     
   })
   
@@ -296,8 +301,6 @@ server <- function(input, output) {
     select(filter(
       studentlist, School == input$school & error == TRUE),c(Student)
       )
-    
-    
   })
   
   output$missing_grades_table <- renderTable({
@@ -317,15 +320,11 @@ server <- function(input, output) {
         no_metrics_Q2, no_metrics_Q3, no_metrics_Q4)
       )
     
-    colnames(missing_grades_display) <- c("Student", "Missing Q1", "Missing Q2", "Missing Q3", "Missing Q4")
+    colnames(missing_grades_display) <- c(
+      "Student", "Missing Q1", "Missing Q2", "Missing Q3", "Missing Q4"
+      )
     missing_grades_display
-    
-    
   })
-  
-
-  
-  
 }
 
 
