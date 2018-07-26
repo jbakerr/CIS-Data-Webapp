@@ -1,52 +1,66 @@
+###########################  Studentlist Prep  #################################
+
+# This script creates the studentlist file which is the master file for all the
+# students on the caseload. The file includes the student demographics, progress
+# monitoring data, hours, criteria, and flags based on ABC indicators. 
+
 studentlist_script <- function(stlist){
   
   metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")
   
-  elem <- c("Glenn Elementary School", "Eno Valley Elementary", "EK Powe Elementary School", "Merrick-Moore")
-  high <- c("Shepard", "Durham Performance Learning Center", "Hillside High School", "Southern High School", "Northern")
+  elem <- c(
+    "Glenn Elementary School", "Eno Valley Elementary", 
+    "EK Powe Elementary School", "Merrick-Moore"
+    )
+  
+  high <- c(
+    "Shepard", "Durham Performance Learning Center",
+    "Hillside High School", "Southern High School", "Northern"
+    )
   
   #removing any fully duplicated student entries
-  stlist <- stlist[!duplicated(stlist[,c("Student.ID", "Student","Birth.Date")]), ] # This is a soft option that just deletes one of the duplicates arbitrarily
+  stlist <- stlist[!duplicated(stlist[,c(
+    "Student.ID", "Student","Birth.Date")]), ] 
   
   
   #Create average grade metric
   
-  grades <- c("Q1_Science", "Q1_Math", "Q1_ELA","Q2_Science", "Q2_Math", "Q2_ELA", "Q1_Attendance Rate", "Q2_Attendance Rate", "Q3_Science", "Q3_Math", "Q3_ELA", "Q3_Attendance Rate", "Q4_Science", "Q4_Math", "Q4_ELA", "Q4_Attendance Rate")
+  grades <- c(
+    "Q1_Science", "Q1_Math", "Q1_ELA","Q2_Science", "Q2_Math", "Q2_ELA", 
+    "Q1_Attendance Rate", "Q2_Attendance Rate", "Q3_Science", "Q3_Math", 
+    "Q3_ELA", "Q3_Attendance Rate", "Q4_Science", "Q4_Math", "Q4_ELA",
+    "Q4_Attendance Rate"
+    )
   
-  stlist[,colnames(stlist) %in% grades] <- sapply(stlist[,colnames(stlist) %in% grades], as.numeric )
+  stlist[,colnames(stlist) %in% grades] <- sapply(
+    stlist[,colnames(stlist) %in% grades], as.numeric
+    )
   
-  
-  
-  
+
   stlist$avg.grade.Q1 <- 0
-  stlist$avg.grade.Q1 <- rowMeans(stlist[, c("Q1_Science", "Q1_Math", "Q1_ELA")], na.rm =T)
+  stlist$avg.grade.Q1 <- rowMeans(stlist[, c(
+    "Q1_Science", "Q1_Math", "Q1_ELA")], na.rm =T)
   
   stlist$avg.grade.Q2 <- 0
-  stlist$avg.grade.Q2 <- rowMeans(stlist[, c("Q2_Science", "Q2_Math", "Q2_ELA")], na.rm =T)
+  stlist$avg.grade.Q2 <- rowMeans(stlist[, c(
+    "Q2_Science", "Q2_Math", "Q2_ELA")], na.rm =T)
   
   stlist$avg.grade.Q3 <- 0
-  stlist$avg.grade.Q3 <- rowMeans(stlist[, c("Q3_Science", "Q3_Math", "Q3_ELA")], na.rm =T)
+  stlist$avg.grade.Q3 <- rowMeans(stlist[, c(
+    "Q3_Science", "Q3_Math", "Q3_ELA")], na.rm =T)
   
   stlist$avg.grade.Q4 <- 0
-  stlist$avg.grade.Q4 <- rowMeans(stlist[, c("Q4_Science", "Q4_Math", "Q4_ELA")], na.rm =T)
+  stlist$avg.grade.Q4 <- rowMeans(stlist[, c(
+    "Q4_Science", "Q4_Math", "Q4_ELA")], na.rm =T)
   
   
-  stlist$avg.grade <- rowMeans(stlist[, c("avg.grade.Q1","avg.grade.Q2", "avg.grade.Q3", "avg.grade.Q4")], na.rm = T)
+  stlist$avg.grade <- rowMeans(stlist[, c(
+    "avg.grade.Q1","avg.grade.Q2", "avg.grade.Q3", "avg.grade.Q4")], na.rm = T)
   
   
-  stlist$avg.attend <- rowMeans(stlist[, c("Q1_Attendance Rate", "Q2_Attendance Rate", "Q3_Attendance Rate", "Q4_Attendance Rate")], na.rm = T)
-  # 
-  # #Aggregating Outcome info
-  # stlist$avgrade1 <- rowMeans(stlist[, c("Q1_Science", "Q1_Math", "Q1_ELA", "Q_", "Q_1 Lang. Arts")], na.rm =T)
-  # stlist$avgrade2 <- rowMeans(stlist[, c("Q_2 Science", "Q_2 Math", "Q_2 Writing", "Q_2 Reading", "Q_2 Lang. Arts")], na.rm =T)
-  # stlist$avgrade3 <- rowMeans(stlist[, c("Q_3 Science", "Q_3 Math", "Q_3 Writing", "Q_3 Reading", "Q_3 Lang. Arts")], na.rm =T)# will give an error before 3rd quarter outcomes are entered
-  # stlist$avgrade4 <- rowMeans(stlist[, c("Q_4 Science", "Q_4 Math", "Q_4 Writing", "Q_4 Reading", "Q_4 Lang. Arts")], na.rm =T)# will give an error before 4th quarter outcomes are entered
-  # stlist$avgrade <- rowMeans(stlist[, colnames(stlist) %in% c("avgrade1", "avgrade2", "avgrade3", "avgrade4")], na.rm = T)
-  # stlist$nogrades <- is.na(stlist$avgrade)
-  # stlist$nogrades1 <- is.na(stlist$avgrade1)
-  # stlist$nogrades2 <- is.na(stlist$avgrade2)
-  # stlist$nogrades3 <- is.na(stlist$avgrade3)
-  # stlist$nogrades4 <- is.na(stlist$avgrade4)
+  stlist$avg.attend <- rowMeans(stlist[, c(
+    "Q1_Attendance Rate", "Q2_Attendance Rate", 
+    "Q3_Attendance Rate", "Q4_Attendance Rate")], na.rm = T)
   
   
   
@@ -54,17 +68,29 @@ studentlist_script <- function(stlist){
   
   stlist$suspended <- F
   
-  stlist$suspended <- ifelse(is.na(stlist$Q1_Suspensions) & is.na(stlist$Q2_Suspensions) & is.na(stlist$Q3_Suspensions) & is.na(stlist$Q4_Suspensions), stlist$suspended <- F, stlist$suspended <- T)
-  stlist$suspended <- ifelse(stlist$suspended == T & (stlist$Q1_Suspensions > 0 | stlist$Q2_Suspensions > 0 | stlist$Q3_Suspensions > 0 | stlist$Q4_Suspensions > 0), stlist$suspended <- T, stlist$suspended <- F)
+  stlist$suspended <- ifelse(
+    is.na(stlist$Q1_Suspensions) & 
+      is.na(stlist$Q2_Suspensions) & 
+      is.na(stlist$Q3_Suspensions) & 
+      is.na(stlist$Q4_Suspensions),
+    stlist$suspended <- F, stlist$suspended <- T
+    )
+  
+  stlist$suspended <- ifelse(
+    stlist$suspended == T & 
+      (stlist$Q1_Suspensions > 0 | 
+         stlist$Q2_Suspensions > 0 | 
+         stlist$Q3_Suspensions > 0 | 
+         stlist$Q4_Suspensions > 0), 
+    stlist$suspended <- T, stlist$suspended <- F
+    )
   
   
-  #This section creates a new variable, criteria, which calculates the number of eligibility criteria a student meets. #####
   
+# This section creates a new variable, criteria, which calculates the number of
+# eligibility criteria a student meets.
   
-  
-  
-  
-  
+
   
   stlist$`Q_1 criteria` <- 0
   stlist$`Q_2 criteria` <- 0
@@ -90,63 +116,163 @@ studentlist_script <- function(stlist){
 
   for(i in q1_subjects){
 
-    stlist$`Q_1 criteria` <- ifelse(is.element(stlist$School, elem) & stlist$`Q_1 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`)
-    stlist$`Q_1 criteria` <- ifelse(is.element(stlist$School, high) & stlist$`Q_1 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`)
-
+    stlist$`Q_1 criteria` <- ifelse(
+      is.element(stlist$School, elem) & 
+        stlist$`Q_1 criteria` != 1 & 
+        (stlist[,i] <= 2 & !is.na(stlist[,i])), 
+      stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`
+      )
+    
+    stlist$`Q_1 criteria` <- ifelse(
+      is.element(stlist$School, high) & 
+        stlist$`Q_1 criteria` != 1 & 
+        (stlist[,i] < 70 & 
+           !is.na(stlist[,i])), 
+      stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`
+      )
   }
 
 
   for(i in q2_subjects){
 
-    stlist$`Q_2 criteria` <- ifelse(is.element(stlist$School, elem) & stlist$`Q_2 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`)
-    stlist$`Q_2 criteria` <- ifelse(is.element(stlist$School, high) & stlist$`Q_2 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`)
+    stlist$`Q_2 criteria` <- ifelse(
+      is.element(stlist$School, elem) & 
+        stlist$`Q_2 criteria` != 1 & 
+        (stlist[,i] <= 2 & !is.na(stlist[,i])), 
+      stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`
+      )
+    
+    stlist$`Q_2 criteria` <- ifelse(
+      is.element(stlist$School, high) & 
+        stlist$`Q_2 criteria` != 1 & 
+        (stlist[,i] < 70 & !is.na(stlist[,i])), 
+      stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`
+      )
 
   }
 
   for(i in q3_subjects){
 
-    stlist$`Q_3 criteria` <- ifelse(is.element(stlist$School, elem) & stlist$`Q_3 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`)
-    stlist$`Q_3 criteria` <- ifelse(is.element(stlist$School, high) & stlist$`Q_3 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`)
+    stlist$`Q_3 criteria` <- ifelse(
+      is.element(stlist$School, elem) & 
+        stlist$`Q_3 criteria` != 1 & 
+        (stlist[,i] <= 2 & !is.na(stlist[,i])), 
+      stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`
+      )
+    
+    stlist$`Q_3 criteria` <- ifelse(
+      is.element(stlist$School, high) & 
+        stlist$`Q_3 criteria` != 1 & 
+        (stlist[,i] < 70 & !is.na(stlist[,i])), 
+      stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`
+      )
 
   }
 
   for(i in q4_subjects){
 
-    stlist$`Q_4 criteria` <- ifelse(is.element(stlist$School, elem) & stlist$`Q_4 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`)
-    stlist$`Q_4 criteria` <- ifelse(is.element(stlist$School, high) & stlist$`Q_4 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`)
+    stlist$`Q_4 criteria` <- ifelse(
+      is.element(stlist$School, elem) & 
+        stlist$`Q_4 criteria` != 1 & 
+        (stlist[,i] <= 2 & 
+           !is.na(stlist[,i])), 
+      stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`
+      )
+    
+    stlist$`Q_4 criteria` <- ifelse(
+      is.element(stlist$School, high) & 
+        stlist$`Q_4 criteria` != 1 & 
+        (stlist[,i] < 70 & 
+           !is.na(stlist[,i])), 
+      stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`
+      )
+    
 
   }
 
-  stlist$max_criteria <- pmax(stlist$`Q_1 criteria`, stlist$`Q_2 criteria`, stlist$`Q_3 criteria`, stlist$`Q_4 criteria`)
+  stlist$max_criteria <- pmax(
+    stlist$`Q_1 criteria`, stlist$`Q_2 criteria`,
+    stlist$`Q_3 criteria`, stlist$`Q_4 criteria`
+    )
 
 
-  stlist$course_criteria <- ifelse(stlist$max_criteria == 1, stlist$course_criteria <- T, stlist$course_criteria <- F)
+  stlist$course_criteria <- ifelse(
+    stlist$max_criteria == 1,
+    stlist$course_criteria <- T, stlist$course_criteria <- F
+    )
 
-  stlist$`Q_1 criteria` <- ifelse(stlist$`Q1_Suspensions` == 0 | is.na(stlist$`Q1_Suspensions`) , stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
-  stlist$`Q_2 criteria` <- ifelse(stlist$`Q2_Suspensions` == 0 | is.na(stlist$`Q2_Suspensions`) , stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
-  stlist$`Q_3 criteria` <- ifelse(stlist$`Q3_Suspensions` == 0 | is.na(stlist$`Q3_Suspensions`) , stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
-  stlist$`Q_4 criteria` <- ifelse(stlist$`Q4_Suspensions` == 0 | is.na(stlist$`Q4_Suspensions`) , stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
-
-  stlist$max_criteria <- pmax(stlist$`Q_1 criteria`, stlist$`Q_2 criteria`, stlist$`Q_3 criteria`, stlist$`Q_4 criteria`)
-
-
-  stlist$beh_criteria <- ifelse(stlist$max_criteria == 2 | (stlist$max_criteria == 1 & stlist$course_criteria == F), stlist$beh_criteria <- T, stlist$beh_criteria <- F)
-
-
-  stlist$`Q_1 criteria` <- ifelse(stlist$`Q1_Attendance Rate` > 90 | is.na(stlist$`Q1_Attendance Rate`), stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
-  stlist$`Q_2 criteria` <- ifelse(stlist$`Q2_Attendance Rate` > 90 | is.na(stlist$`Q2_Attendance Rate`), stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
-  stlist$`Q_3 criteria` <- ifelse(stlist$`Q3_Attendance Rate` > 90 | is.na(stlist$`Q3_Attendance Rate`), stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
-  stlist$`Q_4 criteria` <- ifelse(stlist$`Q4_Attendance Rate` > 90 | is.na(stlist$`Q4_Attendance Rate`), stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
-
-
-  stlist$max_criteria <- pmax(stlist$`Q_1 criteria`, stlist$`Q_2 criteria`, stlist$`Q_3 criteria`, stlist$`Q_4 criteria`)
-
-  stlist$attend_criteria <- ifelse(stlist$max_criteria == 3 | (stlist$max_criteria == 1 & stlist$course_criteria == F & stlist$beh_criteria == F) |
-                                     (stlist$max_criteria == 2 & (stlist$beh_criteria == F | stlist$course_criteria == F)), stlist$attend_criteria <- T, stlist$attend_criteria <- F)
-
-
+  stlist$`Q_1 criteria` <- ifelse(
+    stlist$`Q1_Suspensions` == 0 | is.na(stlist$`Q1_Suspensions`) , 
+    stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1
+    )
   
-  # Determining what quarters to include in metric check
+  stlist$`Q_2 criteria` <- ifelse(
+    stlist$`Q2_Suspensions` == 0 | is.na(stlist$`Q2_Suspensions`) , 
+    stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1
+    )
+  
+  stlist$`Q_3 criteria` <- ifelse(
+    stlist$`Q3_Suspensions` == 0 | is.na(stlist$`Q3_Suspensions`) , 
+    stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1
+    )
+  
+  stlist$`Q_4 criteria` <- ifelse(
+    stlist$`Q4_Suspensions` == 0 | is.na(stlist$`Q4_Suspensions`), 
+    stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1
+    )
+
+  stlist$max_criteria <- pmax(
+    stlist$`Q_1 criteria`, stlist$`Q_2 criteria`, 
+    stlist$`Q_3 criteria`, stlist$`Q_4 criteria`
+    )
+
+
+  stlist$beh_criteria <- ifelse(
+    stlist$max_criteria == 2 | 
+      (stlist$max_criteria == 1 & stlist$course_criteria == F), 
+    stlist$beh_criteria <- T, stlist$beh_criteria <- F
+    )
+
+
+  stlist$`Q_1 criteria` <- ifelse(
+    stlist$`Q1_Attendance Rate` > 90 | 
+      is.na(stlist$`Q1_Attendance Rate`), 
+    stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1
+    )
+  
+  stlist$`Q_2 criteria` <- ifelse(
+    stlist$`Q2_Attendance Rate` > 90 | is.na(stlist$`Q2_Attendance Rate`),
+    stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1
+    )
+  
+  stlist$`Q_3 criteria` <- ifelse(
+    stlist$`Q3_Attendance Rate` > 90 | is.na(stlist$`Q3_Attendance Rate`), 
+    stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1
+    )
+  
+  stlist$`Q_4 criteria` <- ifelse(
+    stlist$`Q4_Attendance Rate` > 90 | is.na(stlist$`Q4_Attendance Rate`), 
+    stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1
+    )
+
+
+  stlist$max_criteria <- pmax(
+    stlist$`Q_1 criteria`, stlist$`Q_2 criteria`,
+    stlist$`Q_3 criteria`, stlist$`Q_4 criteria`
+    )
+
+  stlist$attend_criteria <- ifelse(
+    stlist$max_criteria == 3 |
+      (stlist$max_criteria == 1 & 
+         stlist$course_criteria == F & stlist$beh_criteria == F) |
+                                     (stlist$max_criteria == 2 & 
+                                        (stlist$beh_criteria == F | 
+                                           stlist$course_criteria == F)),
+    stlist$attend_criteria <- T, stlist$attend_criteria <- F
+    )
+  
+  
+# Determining what quarters to include in metric check
   
   stlist$First.CIS.Enrollment.Date <- as.Date(stlist$First.CIS.Enrollment.Date)
   
@@ -179,28 +305,37 @@ studentlist_script <- function(stlist){
   stlist$no_metrics_Q4 <- FALSE
   
   
-  metrics_colums <- c("Q1_Science", "Q1_Math", "Q1_ELA","Q1_Suspensions", "Q1_Attendance Rate","Q2_Science", "Q2_Math", "Q2_ELA","Q2_Suspensions", "Q2_Attendance Rate","Q3_Science", "Q3_Math", "Q3_ELA","Q3_Suspensions", "Q3_Attendance Rate", "Q4_Science", "Q4_Math", "Q4_ELA","Q4_Suspensions", "Q4_Attendance Rate")
+  metrics_colums <- c(
+    "Q1_Science", "Q1_Math", "Q1_ELA","Q1_Suspensions", "Q1_Attendance Rate",
+    "Q2_Science", "Q2_Math", "Q2_ELA","Q2_Suspensions", "Q2_Attendance Rate",
+    "Q3_Science", "Q3_Math", "Q3_ELA","Q3_Suspensions", "Q3_Attendance Rate",
+    "Q4_Science", "Q4_Math", "Q4_ELA","Q4_Suspensions", "Q4_Attendance Rate"
+    )
   
   stlist$no_metrics_Q1 <- ifelse(Sys.Date() > Q1_date & 
                                    stlist$First.CIS.Enrollment.Date < Q1_date, 
-                                 stlist$no_metrics_Q1 <- (rowSums(is.na(stlist[, metrics_colums[1:5]])) > 1 ),
+                                 stlist$no_metrics_Q1 <- (rowSums(
+                                   is.na(stlist[, metrics_colums[1:5]])) > 1 ),
                                  stlist$no_metrics_Q1 <- FALSE)
   
   
   stlist$no_metrics_Q2 <- ifelse(Sys.Date() > Q2_date & 
                                    stlist$First.CIS.Enrollment.Date < Q2_date, 
-                                 stlist$no_metrics_Q2 <- (rowSums(is.na(stlist[, metrics_colums[6:10]])) > 1 ),
+                                 stlist$no_metrics_Q2 <- (rowSums(
+                                   is.na(stlist[, metrics_colums[6:10]])) > 1 ),
                                  stlist$no_metrics_Q2 <- FALSE)  
   
   
   stlist$no_metrics_Q3 <- ifelse(Sys.Date() > Q3_date & 
                                    stlist$First.CIS.Enrollment.Date < Q3_date, 
-                                 stlist$no_metrics_Q3 <- (rowSums(is.na(stlist[, metrics_colums[11:15]])) > 1 ),
+                                 stlist$no_metrics_Q3 <- (
+                                   rowSums(is.na(stlist[, metrics_colums[11:15]])) > 1 ),
                                  stlist$no_metrics_Q3 <- FALSE)  
   
   stlist$no_metrics_Q4 <- ifelse(Sys.Date() > Q4_date & 
                                    stlist$First.CIS.Enrollment.Date < Q4_date, 
-                                 stlist$no_metrics_Q4 <- (rowSums(is.na(stlist[, metrics_colums[16:20]])) > 1),
+                                 stlist$no_metrics_Q4 <- (rowSums(
+                                   is.na(stlist[, metrics_colums[16:20]])) > 1),
                                  stlist$no_metrics_Q4 <- FALSE)  
   
   

@@ -17,7 +17,7 @@ service_script <- function(data){
   
   colnames(data)[1:2] <- c("Home.School","Student.ID")
   
-  # get rid of accidental blank rows
+# get rid of accidental blank rows
   data <- data[!is.na(data$Student.ID), ]
 
   
