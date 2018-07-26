@@ -4,18 +4,18 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(shiny)
-# library(openxlsx)
 library(readxl)
 
 # Pull additional scripts to be used during process ----------------------------
-suppressWarnings(source("tier1.r", local = T))
-suppressWarnings(source("site_coordination.r", local = T))
-suppressWarnings(source('services.r', local= T))
-suppressWarnings(source('caselist.r', local = T))
-suppressWarnings(source('progress_monitoring.r', local = T))
-suppressWarnings(source('studentlist.r', local = T))
-suppressWarnings(source('service_prep.r', local = T))
-suppressWarnings(source('functions.r', local = T))
+suppressWarnings(source("scripts/tier1.r", local = T))
+suppressWarnings(source("scripts/site_coordination.r", local = T))
+suppressWarnings(source('scripts/services.r', local= T))
+suppressWarnings(source('scripts/caselist.r', local = T))
+suppressWarnings(source('scripts/progress_monitoring.r', local = T))
+suppressWarnings(source('scripts/studentlist.r', local = T))
+suppressWarnings(source('scripts/service_prep.r', local = T))
+suppressWarnings(source('scripts/functions.r', local = T))
+
 
 # Start server function --------------------------------------------------------
 
