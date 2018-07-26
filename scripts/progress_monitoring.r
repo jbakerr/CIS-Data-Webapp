@@ -10,7 +10,7 @@ progress_import_script <- function(progress){
   colnames(progress) <- make.names(colnames(progress))
   
   #Setting Vectors that will be used throughout program
-  metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")
+  metrics <- c("Math","Science","ELA", "Suspensions", "Attendance_Rate")
   
   elem <- c(
     "Glenn Elementary School", "Eno Valley Elementary",
@@ -33,6 +33,8 @@ progress_import_script <- function(progress){
   progress$Metric[progress$Metric =='Core Course Grades: Science'] <- "Science"
   progress <- progress[ ! (progress$Metric =='Standardized test score: English / Language Arts'),]
   progress <- progress[ ! (progress$Metric =='Standardized test score: Science'),]
+  progress$Metric[progress$Metric =='Attendance Rate'] <- "Attendance_Rate"
+  
   
   # Rearranged column orders
   progress <- progress[,c(1:8, 9:12,21,13, 14:20)]
@@ -75,8 +77,8 @@ progress_import_script <- function(progress){
 
   # Checking for incomplete progress monitoring settups. If a studuent is 
   #missing baseline or goal data they will be flagged as TRUE
-  progress$attend_error <- ifelse(is.na(progress$`Baseline_Attendance Rate`) &
-                                    is.na(progress$`Target_Attendance Rate`), 
+  progress$attend_error <- ifelse(is.na(progress$`Baseline_Attendance_Rate`) &
+                                    is.na(progress$`Target_Attendance_Rate`), 
                                   TRUE, FALSE
                                   )
   
@@ -108,14 +110,14 @@ progress_import_script <- function(progress){
                            )
 
   #Removing Baseline and Target data now that it isn't relevant
-  progress$`Baseline_Attendance Rate` <- NULL
+  progress$`Baseline_Attendance_Rate` <- NULL
   progress$Baseline_ELA <- NULL
   progress$Baseline_Math <- NULL
   progress$Baseline_Science <- NULL
   progress$Baseline_Suspensions <- NULL
 
   progress$Target_ELA <- NULL
-  progress$`Target_Attendance Rate` <- NULL
+  progress$`Target_Attendance_Rate` <- NULL
   progress$Target_Math <- NULL
   progress$Target_Suspensions <- NULL
   progress$Target_Science <- NULL
