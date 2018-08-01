@@ -38,6 +38,7 @@ studentlist_script <- function(stlist){
   
 
   stlist$avg.grade.Q1 <- 0
+  
   stlist$avg.grade.Q1 <- rowMeans(stlist[, c(
     "Q1_Science", "Q1_Math", "Q1_ELA")], na.rm =T)
   
@@ -126,26 +127,27 @@ studentlist_script <- function(stlist){
                    q3_subjects = q3_subjects, q4_subjects = q4_subjects)
 
 # Elementary Grading Scale For Loop  
-  for(quarters in 1:length(subjects)){
-    for(metrics in subjects[quarters]){
+  for(quarters in 1:4){
+    for(metrics in 1:3){
       quart_adjust <- paste("Q_", as.character(quarters),"_criteria", sep = "")
       stlist[,quart_adjust] <- ifelse(
         is.element(stlist$School, elem) &
           stlist[,quart_adjust] != 1 &
-          (stlist[,metrics] <= 2 & !is.na(stlist[,metrics])),
+          (stlist[,subjects[[quarters]][[metrics]]] <= 2 & !is.na(stlist[,subjects[[quarters]][[metrics]]])),
         stlist[,quart_adjust] + 1, stlist[,quart_adjust]
       )
     }
   }
   
 # High School Grading Scale For Loop  
-  for(quarters in 1:length(subjects)){
-    for(metrics in subjects[quarters]){
+  
+  for(quarters in 1:4){
+    for(metrics in 1:3){
       quart_adjust <- paste("Q_", as.character(quarters),"_criteria", sep = "")
       stlist[,quart_adjust] <- ifelse(
-        is.element(stlist$School, high) &
+        is.element(stlist$School, elem) &
           stlist[,quart_adjust] != 1 &
-          (stlist[,metrics] <= 70 & !is.na(stlist[,metrics])),
+          (stlist[,subjects[[quarters]][[metrics]]] <= 70 & !is.na(stlist[,subjects[[quarters]][[metrics]]])),
         stlist[,quart_adjust] + 1, stlist[,quart_adjust]
       )
     }
@@ -204,7 +206,7 @@ stlist$max_criteria <- pmax(
     "Q1_Attendance_Rate", "Q2_Attendance_Rate", 
     "Q3_Attendance_Rate", "Q4_Attendance_Rate"
   )
-
+  
   # Looping through quarters and attendance date to determine if criteria met.  
   for(quarter in 1:length(attendance_categories)){
     quart_adjust <- paste("Q_", as.character(quarter),"_criteria", sep = "")
@@ -214,9 +216,6 @@ stlist$max_criteria <- pmax(
       stlist[,quart_adjust], stlist[,quart_adjust] + 1
     )
   }
-  
-  
-
 
   stlist$max_criteria <- pmax(
     stlist$`Q_1_criteria`, stlist$`Q_2_criteria`,
@@ -244,7 +243,6 @@ stlist$max_criteria <- pmax(
   
   if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
       as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
-    
     start_year <- start_year
   } else{
     
@@ -375,10 +373,10 @@ stlist$max_criteria <- pmax(
 
   stlist$grade_quintile <- 2
 
-
-
     for(row in 1:nrow(stlist)){
+      
       if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 < quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.33, na.rm = T)){
+        
       stlist[row,]$grade_quintile <- 1
     }
     else if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 > quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.67, na.rm = T)){
@@ -388,9 +386,6 @@ stlist$max_criteria <- pmax(
   }
 
 
-
-
-  
   return(stlist)
 
 }
