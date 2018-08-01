@@ -7,6 +7,7 @@ library(lubridate)
 library(shiny)
 library(readxl)
 
+
 # Pull additional scripts to be used during process ----------------------------
 suppressWarnings(source("scripts/tier1.r", local = T))
 suppressWarnings(source("scripts/site_coordination.r", local = T))
@@ -147,15 +148,36 @@ server <- function(input, output) {
   
   getData_studentlist <- reactive({
     
-    studentlist <- input$studentlist
-    
-    if (is.null(input$studentlist))
+    if(check_studentlist(input) == FALSE){
       return(NULL)
-    studentlist <- read.csv(studentlist$datapath, header = T)
+    }
+    else{
+  
+      studentlist <- studentlist_check(
+        getData_caselist(), getData_progress(), getData_services(),
+        input$studentlist
+      )
+      
+    }
+     return(studentlist)
     
-    return(studentlist)
+
+    # 
+    # if (is.null(input$studentlist))
+    #   return(NULL)
+    # studentlist <- read.csv(studentlist$datapath, header = T)
+    # 
+    # return(studentlist)
     
   })
+  
+  
+# Run Student List Creation if Files Present -----------------------------------
+  
+  observeEvent(check_studentlist(input), {
+  studentlist <<- getData_studentlist()
+  })
+
   
 # UI Display Functions ---------------------------------------------------------
   
@@ -168,7 +190,7 @@ server <- function(input, output) {
     
     caselist <- getData_caselist()
     services <- getData_services()
-    studentlist <- getData_studentlist()
+    
     
     schools <- school_options(
       caselist, studentlist, services
@@ -185,8 +207,6 @@ server <- function(input, output) {
     validate(
       need(check_studentlist(input) == TRUE, studentlist_error_code)
     )
-    
-    
   })
   
 # Download Output Functions ----------------------------------------------------
@@ -226,10 +246,8 @@ server <- function(input, output) {
       paste("studentlist", ".csv", sep = "")
     },
     content = function(file) {
-      req(input$services, input$caselist, input$progress)
-      write.csv(studentlist_creation(
-        getData_caselist(), getData_progress(), 
-        getData_services()), file, row.names = FALSE
+      
+      write.csv(studentlist, file, row.names = FALSE
         )
     }
   )
@@ -247,11 +265,11 @@ server <- function(input, output) {
       return(NULL)
     }
     
-    
-    studentlist <- studentlist_check(
-      getData_caselist(), getData_progress(), getData_services(),
-      getData_studentlist()
-      )
+    # 
+    # studentlist <- studentlist_check(
+    #   getData_caselist(), getData_progress(), getData_services(),
+    #   getData_studentlist()
+    #   )
     
     subsetted_df <- select(
       filter(studentlist, School == input$school),c(Student, Hours)
@@ -292,10 +310,10 @@ server <- function(input, output) {
         check_studentlist(input) == TRUE, studentlist_error_code)
       )
 
-    studentlist <- studentlist_check(
-      getData_caselist(), getData_progress(), getData_services(), 
-      getData_studentlist()
-      )
+    # studentlist <- studentlist_check(
+    #   getData_caselist(), getData_progress(), getData_services(), 
+    #   getData_studentlist()
+    #   )
     
     select(filter(
       studentlist, School == input$school & error == TRUE),c(Student)
@@ -309,10 +327,10 @@ server <- function(input, output) {
         check_studentlist(input) == TRUE, studentlist_error_code)
       )
     
-    studentlist <- studentlist_check(
-      getData_caselist(), getData_progress(), getData_services(), 
-      getData_studentlist()
-      )
+    # studentlist <- studentlist_check(
+    #   getData_caselist(), getData_progress(), getData_services(), 
+    #   getData_studentlist()
+    #   )
     missing_grades_display <- select(filter(
       studentlist, School == input$school & no_metrics == TRUE),
       c(Student, no_metrics_Q1, 
@@ -324,6 +342,8 @@ server <- function(input, output) {
       )
     missing_grades_display
   })
+  
+  
 }
 
 
