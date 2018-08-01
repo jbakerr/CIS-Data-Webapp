@@ -3,7 +3,8 @@
 
 
 # Checks to ensure studentlist file exist in a generated form, or all the
-# required files are uploaded to generate a student list file. 
+# required files are uploaded to generate a student list file. If files are not 
+# present will return FALSE. If they are present will return TRUE.
 
 check_studentlist <- function(input){
   
@@ -61,6 +62,7 @@ studentlist_creation <- function(caselist, progress, services){
 # Look into see if duplicating earlier function 
 studentlist_check <- function(caselist, progress, data, studentlist){
   if(!is.null(studentlist)){
+    studentlist <- read.csv(studentlist$datapath, header = T)
     return(studentlist)
   }
   else if(!is.null(studentlist_creation(caselist, progress, data))){
