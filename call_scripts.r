@@ -5,6 +5,7 @@
 library(markdown)
 library(plyr) 
 library(dplyr)
+library(tidyr)
 library(lubridate)
 library(shiny)
 library(rsconnect)
@@ -82,7 +83,7 @@ site_coordination <- suppressWarnings(
 
 
 
-site_coordination <- site_coordination_script(site_coordination_df)
+site_coordination <- site_coordination_script(site_coordination)
 
 
 # Tier 1 -----------------------------------------------------------------------
@@ -94,7 +95,7 @@ tier1 <- suppressWarnings(
   read_excel('tier1.xlsx', sheet = 1,skip = 1, col_types = ct)
   )
 
-tier1 <- tier1_script(tier1_df)
+tier1 <- tier1_script(tier1)
 
 
 # Student List Creation --------------------------------------------------------
