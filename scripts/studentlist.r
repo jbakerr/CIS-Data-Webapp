@@ -338,11 +338,7 @@ stlist$max_criteria <- pmax(
     )
   }
   
-  improve_Math$improve_Math <- T
-
-  improve_Science$improve_Science <- T
-
-  improve_ELA$improve_ELA <- T
+ 
 
   
 # Elementary Calculations
@@ -358,47 +354,72 @@ stlist$max_criteria <- pmax(
     )
   }
 
+  # If a student appears in the following data set they have improved
+  # the appropriate metric
+  
+  improve_Math$improve_Math <- T
+  improve_Science$improve_Science <- T
+  improve_ELA$improve_ELA <- T
   improve_elem_Math$improve_Math <- T
   improve_elem_Science$improve_Science <- T
   improve_elem_ELA$improve_ELA <- T
 
-#test develop 
   
-  # 
-  # 
-  # improve.elem.attend <- subset(stlist, stlist$School %in% elem  & ((stlist$`Q2_Attendance_Rate` - stlist$`Q1_Attendance_Rate`) + (stlist$`Q3_Attendance_Rate` - stlist$`Q2_Attendance_Rate`) >= 6))
-  # #improve.elem.attend <- subset(improve.elem.attend, !is.na(improve.elem.attend$Name))
-  # #elem.attend.eligible <- subset(stlist, stlist$Site %in% elem  &  (stlist$totabs1 > 3 | stlist$totabs2 > 3 | stlist$totabs3 > 3 | stlist$totabs4 > 3))
-  # 
-  # improve.high.attend <- subset(stlist, stlist$School %in% high  & ((stlist$`Q2_Attendance_Rate` - stlist$`Q1_Attendance_Rate`) + (stlist$`Q3_Attendance_Rate` - stlist$`Q2_Attendance_Rate`) >= 10))
-  # #improve.high.attend <- subset(improve.high.attend, !is.na(improve.high.attend$Name))
-  # #high.attend.eligible <- subset(stlist, stlist$Site %in% high  &  (stlist$totabs1 > 5 | stlist$totabs2 > 5 | stlist$totabs3 > 5 | stlist$totabs4 > 5))
-  # 
-  # 
-  improve_grades <- merge(improve_ELA, improve_Science, all = TRUE)
+  # Merging datasets
+  
+  improve_Science <- merge(improve_Science, improve_elem_Science, all = T)
+  improve_Math <- merge(improve_Math, improve_elem_Math, all = T)
+  improve_ELA <- merge(improve_ELA, improve_elem_ELA, all = T)
+  improve_grades <- merge(improve_ELA, improve_Science, all = T)
   improve_grades <- merge(improve_grades, improve_Math, all = T)
-  improve_grades <- merge(improve_grades, improve_elem_Science, all = T)
-  improve_grades <- merge(improve_grades, improve_elem_ELA, all = T)
-  improve_grades <- merge(improve_grades, improve_elem_Math, all = T)
   improve_grades$improve_grades <- TRUE
-  # 
-  # improve.attend <- merge(improve.high.attend, improve.elem.attend, all = T)
-  # improve.attend$attend <- TRUE
-  # 
+  
+  # Setting the master file's default value to False, will get overwritten if
+  # student appears in the improve_grades data frame.
+  
   stlist$improve_grades <- F
   stlist$improve_math <- F
   stlist$improve_science <- F
   stlist$improve_ela <- F
   stlist$improve_all_grades <- F
-  # 
+  
+  
+   
+  # Checking if students from master list appear in the improve grade subsets. 
+  
+  stlist$improve_grades <- ifelse(
+    stlist$Student.ID %in% improve_grades$Student.ID, 
+    stlist$improve_grades <- T, stlist$improve_grades <- F
+    )
+  stlist$improve_math <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_Math == T,
+                                          "Student.ID"], 
+    stlist$improve_math <- T, stlist$improve_math <- F
+    )
+  stlist$improve_science <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_Science == T,
+                                          "Student.ID"],
+    stlist$improve_science <- T, stlist$improve_science <- F
+    )
+  stlist$improve_ela <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_ELA == T,
+                                          "Student.ID"], 
+    stlist$improve_ela <- T, stlist$improve_ela <- F
+    )
+  stlist$improve_all_grades <- ifelse(
+    stlist$improve_ela == T & stlist$improve_science == T & 
+      stlist$improve_math == T, 
+    stlist$improve_all_grades <- T, stlist$improve_all_grades <- F
+    )
+
+
+  
+# Attendance Improvements ------------------------------------------------------
+  
   # stlist$improve_attend <- ifelse(stlist$Student.ID %in% improve.attend$Student.ID, stlist$improve.attend <- T, stlist$improve.attend <- F)
-  stlist$improve_grades <- ifelse(stlist$Student.ID %in% improve_grades$Student.ID, stlist$improve_grades <- T, stlist$improve_grades <- F)
-  stlist$improve_math <- ifelse(stlist$Student.ID %in% improve_grades[improve_grades$improve_Math == T, "Student.ID"], stlist$improve_math <- T, stlist$improve_math <- F)
-  stlist$improve_science <- ifelse(stlist$Student.ID %in% improve_grades[improve_grades$improve_Science == T, "Student.ID"], stlist$improve_science <- T, stlist$improve_science <- F)
-  stlist$improve_ela <- ifelse(stlist$Student.ID %in% improve_grades[improve_grades$improve_ELA == T, "Student.ID"], stlist$improve_ela <- T, stlist$improve_ela <- F)
-  stlist$improve_all_grades <- ifelse(stlist$improve_ela == T & stlist$improve_science == T & stlist$improve_math == T, stlist$improve_all_grades <- T, stlist$improve_all_grades <- F)
-
-
+  
+  
+  
 # Ranking Students By Quintile Based on Q1 Performance -------------------------
   #Bottom flagging students by percentiles (1/3)
 
