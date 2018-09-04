@@ -7,7 +7,7 @@
 studentlist_script <- function(stlist){
   
   
-  # Determining what quarters to include in metric check
+# Determining what quarters to include in metric check
   
   stlist$First.CIS.Enrollment.Date <- as.Date(stlist$First.CIS.Enrollment.Date)
   
@@ -16,7 +16,7 @@ studentlist_script <- function(stlist){
   
   if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
       as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
-    start_year <- start_year -1 
+    start_year <- start_year 
   } else{
     
     start_year <- start_year - 1
@@ -54,12 +54,12 @@ studentlist_script <- function(stlist){
     "Hillside High School", "Southern High School", "Northern"
     )
   
-  #removing any fully duplicated student entries
+# removing any fully duplicated student entries
   stlist <- stlist[!duplicated(stlist[,c(
     "Student.ID", "Student","Birth.Date")]), ] 
   
   
-  #Create average grade metric
+# Create average grade metric
   
   grades <- c(
     "Q1_Science", "Q1_Math", "Q1_ELA","Q2_Science", "Q2_Math", "Q2_ELA", 
@@ -100,8 +100,7 @@ studentlist_script <- function(stlist){
     "Q3_Attendance_Rate", "Q4_Attendance_Rate")], na.rm = T)
   
   
-  
-  #Calculate Suspenion Data
+# Calculate Suspenion Data
   
   stlist$suspended <- F
   
@@ -123,7 +122,6 @@ studentlist_script <- function(stlist){
     )
   
   
-  
 # This section creates a new variable, criteria, which calculates the number of
 # eligibility criteria a student meets.
   
@@ -138,13 +136,11 @@ studentlist_script <- function(stlist){
   stlist$criteria <- 0
   
   
-  
 # Setting category criteria to False
   
   stlist$attend_criteria <- F
   stlist$beh_criteria <- F
   stlist$course_criteria <- F
-  
   
 
 # Calculating Course Work Criteria ---------------------------------------------
@@ -189,8 +185,6 @@ studentlist_script <- function(stlist){
     }
   }
 
-  
-
 stlist$max_criteria <- pmax(
   stlist$`Q_1_criteria`, stlist$`Q_2_criteria`,
   stlist$`Q_3_criteria`, stlist$`Q_4_criteria`
@@ -220,8 +214,6 @@ stlist$max_criteria <- pmax(
     )
   }
   
-
-  
   stlist$max_criteria <- pmax(
     stlist$`Q_1_criteria`, stlist$`Q_2_criteria`,
     stlist$`Q_3_criteria`, stlist$`Q_4_criteria`
@@ -239,7 +231,7 @@ stlist$max_criteria <- pmax(
   
 
   
-  # Looping through quarters and attendance date to determine if criteria met.  
+# Looping through quarters and attendance date to determine if criteria met.  
   for(quarter in 1:quarters_to_include){
     quart_adjust <- paste("Q_", as.character(quarter),"_criteria", sep = "")
     attend_review <- paste("Q", as.character(quarter),"_Attendance_Rate", sep = "")
@@ -268,10 +260,7 @@ stlist$max_criteria <- pmax(
 # Metric Check Calculation -----------------------------------------------------  
 
   
-
-  
-  
-  #Creates no-metric column
+# Creates no-metric column
   stlist$no_metrics <- FALSE
   stlist$no_metrics_Q1 <- FALSE
   stlist$no_metrics_Q2 <- FALSE
@@ -313,9 +302,7 @@ stlist$max_criteria <- pmax(
                                  stlist$no_metrics_Q4 <- FALSE)  
   
   
-  
   stlist$no_metrics <- apply(stlist[,68:71], 1, any)
-  
   
   
 # Caclulate Progress Monitoring Improvements -----------------------------------
@@ -338,9 +325,7 @@ stlist$max_criteria <- pmax(
     )
   }
   
- 
 
-  
 # Elementary Calculations
   
   for(i in metric_categories){
@@ -354,8 +339,8 @@ stlist$max_criteria <- pmax(
     )
   }
 
-  # If a student appears in the following data set they have improved
-  # the appropriate metric
+# If a student appears in the following data set they have improved
+# the appropriate metric
   
   improve_Math$improve_Math <- T
   improve_Science$improve_Science <- T
@@ -365,7 +350,7 @@ stlist$max_criteria <- pmax(
   improve_elem_ELA$improve_ELA <- T
 
   
-  # Merging datasets
+# Merging datasets
   
   improve_Science <- merge(improve_Science, improve_elem_Science, all = T)
   improve_Math <- merge(improve_Math, improve_elem_Math, all = T)
@@ -374,8 +359,8 @@ stlist$max_criteria <- pmax(
   improve_grades <- merge(improve_grades, improve_Math, all = T)
   improve_grades$improve_grades <- TRUE
   
-  # Setting the master file's default value to False, will get overwritten if
-  # student appears in the improve_grades data frame.
+# Setting the master file's default value to False, will get overwritten if
+# student appears in the improve_grades data frame.
   
   stlist$improve_grades <- F
   stlist$improve_math <- F
@@ -383,9 +368,7 @@ stlist$max_criteria <- pmax(
   stlist$improve_ela <- F
   stlist$improve_all_grades <- F
   
-  
-   
-  # Checking if students from master list appear in the improve grade subsets. 
+# Checking if students from master list appear in the improve grade subsets. 
   
   stlist$improve_grades <- ifelse(
     stlist$Student.ID %in% improve_grades$Student.ID, 
@@ -447,7 +430,7 @@ stlist$max_criteria <- pmax(
 
 # Ranking Students By Quintile Based on Q1 Performance -------------------------
 
-    #Bottom flagging students by percentiles (1/3)
+# Bottom flagging students by percentiles (1/3)
 
 
   stlist$grade_quintile <- 2

@@ -42,13 +42,10 @@ server <- function(input, output) {
       read_excel(caselist$datapath, sheet = 1,skip = 1, col_types = ct)
       )
       
-
-    
     caselist <- caselist_script(caselist)
     return(caselist)
 
   })
-  
   
   getData_progress <- reactive({
     
@@ -71,7 +68,6 @@ server <- function(input, output) {
     
     return(progress)
     
-    
   })
   
   getData_services <- reactive({
@@ -88,8 +84,6 @@ server <- function(input, output) {
     services <- suppressWarnings(
       read_excel(services$datapath, sheet = 1,skip = 1, col_types = ct)
       )
-
-
     
     services <- service_script(services)
     return(services)
@@ -136,8 +130,6 @@ server <- function(input, output) {
       read_excel(site_coordination$datapath, sheet = 1,skip = 0, col_types = ct)
       )
     
-
-
     site_coordination_df <- site_coordination_script(site_coordination_df)
     
     
@@ -161,13 +153,6 @@ server <- function(input, output) {
     }
      return(studentlist)
     
-
-    # 
-    # if (is.null(input$studentlist))
-    #   return(NULL)
-    # studentlist <- read.csv(studentlist$datapath, header = T)
-    # 
-    # return(studentlist)
     
   })
   
@@ -265,11 +250,6 @@ server <- function(input, output) {
       return(NULL)
     }
     
-    # 
-    # studentlist <- studentlist_check(
-    #   getData_caselist(), getData_progress(), getData_services(),
-    #   getData_studentlist()
-    #   )
     
     subsetted_df <- select(
       filter(studentlist, School == input$school),c(Student, Hours)
@@ -310,10 +290,6 @@ server <- function(input, output) {
         check_studentlist(input) == TRUE, studentlist_error_code)
       )
 
-    # studentlist <- studentlist_check(
-    #   getData_caselist(), getData_progress(), getData_services(), 
-    #   getData_studentlist()
-    #   )
     
     select(filter(
       studentlist, School == input$school & error == TRUE),c(Student)
@@ -327,10 +303,6 @@ server <- function(input, output) {
         check_studentlist(input) == TRUE, studentlist_error_code)
       )
     
-    # studentlist <- studentlist_check(
-    #   getData_caselist(), getData_progress(), getData_services(), 
-    #   getData_studentlist()
-    #   )
     missing_grades_display <- select(filter(
       studentlist, School == input$school & no_metrics == TRUE),
       c(Student, no_metrics_Q1, 
