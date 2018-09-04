@@ -127,3 +127,30 @@ age_years <- function(earlier, later)
 }
 
 
+attendance_check <- function(q_i, q_i_minus){
+  if(is.na(q_i) | is.na(q_i_minus)){
+    return(0)
+  }
+  else if(q_i == q_i_minus){
+    return(0)
+  }
+  
+  else if(q_i >= (q_i_minus/2 + 50)){
+    return(1)
+  }
+  else if(q_i <= (q_i_minus/2 + 50) & (q_i >= q_i_minus - 2)){
+    return(0)
+  }
+  else{
+    return(-1)
+  }
+}
+
+attend_improve_check <- function(q2, q3, q4){
+  if(sum(q2, q3, q4) >= 1){
+    return(TRUE)
+  }
+  else{
+    return(FALSE)
+  }
+}
