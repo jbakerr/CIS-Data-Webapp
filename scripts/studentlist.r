@@ -416,24 +416,56 @@ stlist$max_criteria <- pmax(
   
 # Attendance Improvements ------------------------------------------------------
   
-  # stlist$improve_attend <- ifelse(stlist$Student.ID %in% improve.attend$Student.ID, stlist$improve.attend <- T, stlist$improve.attend <- F)
-  
-  
-  
-# Ranking Students By Quintile Based on Q1 Performance -------------------------
-  #Bottom flagging students by percentiles (1/3)
 
+  
+  stlist$improve_q2_attend <- 0
+  stlist$improve_q3_attend <- 0
+  stlist$improve_q4_attend <- 0
+  
+  stlist$improve_q2_attend <- apply(
+    stlist[, c('Q1_Attendance_Rate', 'Q2_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_q3_attend <- apply(
+    stlist[, c('Q2_Attendance_Rate', 'Q3_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_q4_attend <- apply(
+    stlist[, c('Q3_Attendance_Rate', 'Q4_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_attend <- FALSE
+  
+  stlist$improve_attend <- apply(
+    stlist[, c("improve_q2_attend", "improve_q3_attend", "improve_q4_attend")], 1,
+    function(x) attend_improve_check(x[1],x[2],x[3])
+    )
+  
+
+# Ranking Students By Quintile Based on Q1 Performance -------------------------
+
+    #Bottom flagging students by percentiles (1/3)
 
 
   stlist$grade_quintile <- 2
 
     for(row in 1:nrow(stlist)){
       
-      if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 < quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.33, na.rm = T)){
+      if(!is.na(stlist[row,]$avg.grade.Q1) &
+         stlist[row,]$avg.grade.Q1 <
+         quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1,
+                  prob = 0.33, na.rm = T)){
         
       stlist[row,]$grade_quintile <- 1
-    }
-    else if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 > quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.67, na.rm = T)){
+      }
+      
+    else if(!is.na(stlist[row,]$avg.grade.Q1) &
+            stlist[row,]$avg.grade.Q1 > 
+            quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1,
+                     prob = 0.67, na.rm = T)){
       stlist[row,]$grade_quintile <- 3
     }
 
