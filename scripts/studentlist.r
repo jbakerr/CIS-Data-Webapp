@@ -6,6 +6,42 @@
 
 studentlist_script <- function(stlist){
   
+  
+# Determining what quarters to include in metric check
+  
+  stlist$First.CIS.Enrollment.Date <- as.Date(stlist$First.CIS.Enrollment.Date)
+  
+  
+  start_year <-  as.integer(format(Sys.Date(), "%Y"))
+  
+  if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
+      as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
+    start_year <- start_year 
+  } else{
+    
+    start_year <- start_year - 1
+  }
+  
+  
+  Q1_date <- as.Date(paste(start_year, "-10-31", sep = ""))
+  Q2_date <- as.Date(paste(start_year + 1, "-01-15", sep = ""))
+  Q3_date <- as.Date(paste(start_year + 1, "-03-31", sep = ""))
+  Q4_date <- as.Date(paste(start_year + 1, "-06-10", sep = ""))
+  
+  
+  if(Sys.Date() >= Q1_date + 10){
+    quarters_to_include <- 1
+  }  
+  if (Sys.Date() >= Q2_date + 10){
+    quarters_to_include <- 2
+  } 
+  if (Sys.Date() >= Q3_date + 10){
+    quarters_to_include <- 3
+  } 
+  if (Sys.Date() >= Q4_date + 10){
+    quarters_to_include <- 4
+  }
+  
   metrics <- c("Math","Science","ELA", "Suspensions", "Attendance_Rate")
   
   elem <- c(
@@ -18,12 +54,12 @@ studentlist_script <- function(stlist){
     "Hillside High School", "Southern High School", "Northern"
     )
   
-  #removing any fully duplicated student entries
+# removing any fully duplicated student entries
   stlist <- stlist[!duplicated(stlist[,c(
     "Student.ID", "Student","Birth.Date")]), ] 
   
   
-  #Create average grade metric
+# Create average grade metric
   
   grades <- c(
     "Q1_Science", "Q1_Math", "Q1_ELA","Q2_Science", "Q2_Math", "Q2_ELA", 
@@ -64,8 +100,7 @@ studentlist_script <- function(stlist){
     "Q3_Attendance_Rate", "Q4_Attendance_Rate")], na.rm = T)
   
   
-  
-  #Calculate Suspenion Data
+# Calculate Suspenion Data
   
   stlist$suspended <- F
   
@@ -87,7 +122,6 @@ studentlist_script <- function(stlist){
     )
   
   
-  
 # This section creates a new variable, criteria, which calculates the number of
 # eligibility criteria a student meets.
   
@@ -102,13 +136,11 @@ studentlist_script <- function(stlist){
   stlist$criteria <- 0
   
   
-  
 # Setting category criteria to False
   
   stlist$attend_criteria <- F
   stlist$beh_criteria <- F
   stlist$course_criteria <- F
-  
   
 
 # Calculating Course Work Criteria ---------------------------------------------
@@ -127,8 +159,8 @@ studentlist_script <- function(stlist){
                    q3_subjects = q3_subjects, q4_subjects = q4_subjects)
 
 # Elementary Grading Scale For Loop  
-  for(quarters in 1:4){
-    for(metrics in 1:3){
+  for(quarters in 1:quarters_to_include){
+    for(metrics in 1:(quarters_to_include-1)){
       quart_adjust <- paste("Q_", as.character(quarters),"_criteria", sep = "")
       stlist[,quart_adjust] <- ifelse(
         is.element(stlist$School, elem) &
@@ -141,8 +173,8 @@ studentlist_script <- function(stlist){
   
 # High School Grading Scale For Loop  
   
-  for(quarters in 1:4){
-    for(metrics in 1:3){
+  for(quarters in 1:quarters_to_include){
+    for(metrics in 1:(quarters_to_include-1)){
       quart_adjust <- paste("Q_", as.character(quarters),"_criteria", sep = "")
       stlist[,quart_adjust] <- ifelse(
         is.element(stlist$School, elem) &
@@ -152,8 +184,6 @@ studentlist_script <- function(stlist){
       )
     }
   }
-
-  
 
 stlist$max_criteria <- pmax(
   stlist$`Q_1_criteria`, stlist$`Q_2_criteria`,
@@ -175,7 +205,7 @@ stlist$max_criteria <- pmax(
     )
   
 # Looping through quarters and suspension date to determine if criteria met.  
-  for(quarter in 1:length(behavior_categories)){
+  for(quarter in 1:quarters_to_include){
     quart_adjust <- paste("Q_", as.character(quarter),"_criteria", sep = "")
     suspen_review <- paste("Q", as.character(quarter),"_Suspensions", sep = "")
     stlist[,quart_adjust] <- ifelse(
@@ -183,8 +213,6 @@ stlist$max_criteria <- pmax(
     stlist[,quart_adjust], stlist[,quart_adjust] + 1
     )
   }
-  
-
   
   stlist$max_criteria <- pmax(
     stlist$`Q_1_criteria`, stlist$`Q_2_criteria`,
@@ -201,18 +229,14 @@ stlist$max_criteria <- pmax(
 
 # Calculating Attendance Criteria ----------------------------------------------
   
-  # Setting the attendance categories (not really used)  
-  attendance_categories <- c(
-    "Q1_Attendance_Rate", "Q2_Attendance_Rate", 
-    "Q3_Attendance_Rate", "Q4_Attendance_Rate"
-  )
+
   
-  # Looping through quarters and attendance date to determine if criteria met.  
-  for(quarter in 1:length(attendance_categories)){
+# Looping through quarters and attendance date to determine if criteria met.  
+  for(quarter in 1:quarters_to_include){
     quart_adjust <- paste("Q_", as.character(quarter),"_criteria", sep = "")
     attend_review <- paste("Q", as.character(quarter),"_Attendance_Rate", sep = "")
     stlist[,quart_adjust] <- ifelse(
-      stlist[,attend_review] == 0 | is.na(stlist[,attend_review]) , 
+      stlist[,attend_review] > 90 | is.na(stlist[,attend_review]) , 
       stlist[,quart_adjust], stlist[,quart_adjust] + 1
     )
   }
@@ -234,31 +258,9 @@ stlist$max_criteria <- pmax(
   
   
 # Metric Check Calculation -----------------------------------------------------  
-# Determining what quarters to include in metric check
-  
-  stlist$First.CIS.Enrollment.Date <- as.Date(stlist$First.CIS.Enrollment.Date)
-  
-  
-  start_year <-  as.integer(format(Sys.Date(), "%Y"))
-  
-  if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
-      as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
-    start_year <- start_year
-  } else{
-    
-    start_year <- start_year - 1
-  }
-  
-  
-  Q1_date <- as.Date(paste(start_year, "-10-31", sep = ""))
-  Q2_date <- as.Date(paste(start_year + 1, "-01-15", sep = ""))
-  Q3_date <- as.Date(paste(start_year + 1, "-03-31", sep = ""))
-  Q4_date <- as.Date(paste(start_year + 1, "-06-10", sep = ""))
-  
 
   
-  
-  #Creates no-metric column
+# Creates no-metric column
   stlist$no_metrics <- FALSE
   stlist$no_metrics_Q1 <- FALSE
   stlist$no_metrics_Q2 <- FALSE
@@ -300,86 +302,153 @@ stlist$max_criteria <- pmax(
                                  stlist$no_metrics_Q4 <- FALSE)  
   
   
-  
   stlist$no_metrics <- apply(stlist[,68:71], 1, any)
   
   
-  
 # Caclulate Progress Monitoring Improvements -----------------------------------
+  
+# Academic Improvements --------------------------------------------------------
+  
+  
+  metric_categories <- c('Math', 'Science', 'ELA')
 
-  # improve.math <- subset(stlist, stlist$School %in% high & (stlist$Q2_Math - stlist$Q1_Math) >= 10)
-  # improve.math$improve_math <- T
-  # #improve.math <- subset(improve.math, !is.na(improve.math$Name))
-  # 
-  # improve.elm.math <- subset(stlist, stlist$School %in% elem & ((stlist$Q2_Math - stlist$Q1_Math) + (stlist$Q3_Math - stlist$Q2_Math)  >= 1.0 ))
-  # improve.elm.math$improve_math <- T
-  # #improve.elm.math <- subset(improve.elm.math, !is.na(improve.elm.math$Name))
-  # 
-  # 
-  # improve.la <- subset(stlist, stlist$School %in% high & (stlist$Q2_ELA - stlist$Q1_ELA) >= 10)
-  # improve.la$improve_la <- T
-  # #improve.la <- subset(improve.la, !is.na(improve.la$Name))
-  # 
-  # improve.elm.la <- subset(stlist, stlist$School %in% elem & (stlist$Q2_ELA - stlist$Q1_ELA) + (stlist$Q3_ELA - stlist$Q2_ELA)  >= 1.0 )
-  # improve.elm.la$improve_la <- T
-  # #improve.elm.la <- subset(improve.elm.la, !is.na(improve.elm.la$Name))
-  # 
-  # improve.science <- subset(stlist, stlist$School %in% high & (stlist$Q2_Science - stlist$Q1_Science) >= 10)
-  # improve.science$improve_science <- T
-  # #improve.science <- subset(improve.science, !is.na(improve.science$Name))
-  # 
-  # improve.elm.science <- subset(stlist, stlist$School %in% elem & (stlist$Q2_Science - stlist$Q1_Science) + (stlist$Q3_Science - stlist$Q2_Science)  >= 1.0 )
-  # improve.elm.science$improve_science <- T
-  # #improve.elm.science <- subset(improve.elm.science, !is.na(improve.elm.science$Name))
-  # 
-  # 
-  # improve.elem.attend <- subset(stlist, stlist$School %in% elem  & ((stlist$`Q2_Attendance_Rate` - stlist$`Q1_Attendance_Rate`) + (stlist$`Q3_Attendance_Rate` - stlist$`Q2_Attendance_Rate`) >= 6))
-  # #improve.elem.attend <- subset(improve.elem.attend, !is.na(improve.elem.attend$Name))
-  # #elem.attend.eligible <- subset(stlist, stlist$Site %in% elem  &  (stlist$totabs1 > 3 | stlist$totabs2 > 3 | stlist$totabs3 > 3 | stlist$totabs4 > 3))
-  # 
-  # improve.high.attend <- subset(stlist, stlist$School %in% high  & ((stlist$`Q2_Attendance_Rate` - stlist$`Q1_Attendance_Rate`) + (stlist$`Q3_Attendance_Rate` - stlist$`Q2_Attendance_Rate`) >= 10))
-  # #improve.high.attend <- subset(improve.high.attend, !is.na(improve.high.attend$Name))
-  # #high.attend.eligible <- subset(stlist, stlist$Site %in% high  &  (stlist$totabs1 > 5 | stlist$totabs2 > 5 | stlist$totabs3 > 5 | stlist$totabs4 > 5))
-  # 
-  # 
-  # improve.grades <- merge(improve.la, improve.science, all = TRUE)
-  # improve.grades <- merge(improve.grades, improve.math, all= T)
-  # improve.grades <- merge(improve.grades, improve.elm.science, all = T)
-  # improve.grades <- merge(improve.grades, improve.elm.la, all = T)
-  # improve.grades <- merge(improve.grades, improve.elm.math, all = T)
-  # improve.grades$improve.grades <- TRUE
-  # 
-  # improve.attend <- merge(improve.high.attend, improve.elem.attend, all = T)
-  # improve.attend$attend <- TRUE
-  # 
-  # stlist$improve_grades <- F
-  # stlist$improve_math <- F
-  # stlist$improve_science <- F
-  # stlist$improve_ela <- F
-  # stlist$improve_all_grades <- F
-  # 
-  # stlist$improve_attend <- ifelse(stlist$Student.ID %in% improve.attend$Student.ID, stlist$improve.attend <- T, stlist$improve.attend <- F)
-  # stlist$improve_grades <- ifelse(stlist$Student.ID %in% improve.grades$Student.ID, stlist$improve_grades <- T, stlist$improve_grades <- F)
-  # stlist$improve_math <- ifelse(stlist$Student.ID %in% improve.grades[improve.grades$improve_math == T, "Student.ID"], stlist$improve_math <- T, stlist$improve_math <- F)
-  # stlist$improve_science <- ifelse(stlist$Student.ID %in% improve.grades[improve.grades$improve_science == T, "Student.ID"], stlist$improve_science <- T, stlist$improve_science <- F)
-  # stlist$improve_ela <- ifelse(stlist$Student.ID %in% improve.grades[improve.grades$improve_la == T, "Student.ID"], stlist$improve_ela <- T, stlist$improve_ela <- F)
-  # stlist$improve_all_grades <- ifelse(stlist$improve_ela == T & stlist$improve_science == T & stlist$improve_math == T, stlist$improve_all_grades <- T, stlist$improve_all_grades <- F)
+# Middle and High School Calculations  
+    
+  for(i in metric_categories){
+    
+    assign(paste("improve_", i, sep = ''), 
+           subset(stlist, stlist$School %in% high & (
+      (stlist[,paste("Q4_", i, sep = '')] - stlist[,paste("Q3_", i, sep = '')]) +
+        (stlist[,paste("Q3_", i, sep = '')] - stlist[,paste("Q2_", i, sep = '')]) +
+        (stlist[,paste("Q2_", i, sep = '')] - stlist[,paste("Q1_", i, sep = '')])  >= 10)
+      )  
+    )
+  }
+  
 
+# Elementary Calculations
+  
+  for(i in metric_categories){
+    
+    assign(paste("improve_elem_", i, sep = ''), 
+           subset(stlist, stlist$School %in% elem & (
+             (stlist[,paste("Q4_", i, sep = '')] - stlist[,paste("Q3_", i, sep = '')]) +
+               (stlist[,paste("Q3_", i, sep = '')] - stlist[,paste("Q2_", i, sep = '')]) +
+               (stlist[,paste("Q2_", i, sep = '')] - stlist[,paste("Q1_", i, sep = '')])  >= 1.0)
+           )  
+    )
+  }
+
+# If a student appears in the following data set they have improved
+# the appropriate metric
+  
+  improve_Math$improve_Math <- T
+  improve_Science$improve_Science <- T
+  improve_ELA$improve_ELA <- T
+  improve_elem_Math$improve_Math <- T
+  improve_elem_Science$improve_Science <- T
+  improve_elem_ELA$improve_ELA <- T
+
+  
+# Merging datasets
+  
+  improve_Science <- merge(improve_Science, improve_elem_Science, all = T)
+  improve_Math <- merge(improve_Math, improve_elem_Math, all = T)
+  improve_ELA <- merge(improve_ELA, improve_elem_ELA, all = T)
+  improve_grades <- merge(improve_ELA, improve_Science, all = T)
+  improve_grades <- merge(improve_grades, improve_Math, all = T)
+  improve_grades$improve_grades <- TRUE
+  
+# Setting the master file's default value to False, will get overwritten if
+# student appears in the improve_grades data frame.
+  
+  stlist$improve_grades <- F
+  stlist$improve_math <- F
+  stlist$improve_science <- F
+  stlist$improve_ela <- F
+  stlist$improve_all_grades <- F
+  
+# Checking if students from master list appear in the improve grade subsets. 
+  
+  stlist$improve_grades <- ifelse(
+    stlist$Student.ID %in% improve_grades$Student.ID, 
+    stlist$improve_grades <- T, stlist$improve_grades <- F
+    )
+  stlist$improve_math <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_Math == T,
+                                          "Student.ID"], 
+    stlist$improve_math <- T, stlist$improve_math <- F
+    )
+  stlist$improve_science <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_Science == T,
+                                          "Student.ID"],
+    stlist$improve_science <- T, stlist$improve_science <- F
+    )
+  stlist$improve_ela <- ifelse(
+    stlist$Student.ID %in% improve_grades[improve_grades$improve_ELA == T,
+                                          "Student.ID"], 
+    stlist$improve_ela <- T, stlist$improve_ela <- F
+    )
+  stlist$improve_all_grades <- ifelse(
+    stlist$improve_ela == T & stlist$improve_science == T & 
+      stlist$improve_math == T, 
+    stlist$improve_all_grades <- T, stlist$improve_all_grades <- F
+    )
+
+
+  
+# Attendance Improvements ------------------------------------------------------
+  
+
+  
+  stlist$improve_q2_attend <- 0
+  stlist$improve_q3_attend <- 0
+  stlist$improve_q4_attend <- 0
+  
+  stlist$improve_q2_attend <- apply(
+    stlist[, c('Q1_Attendance_Rate', 'Q2_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_q3_attend <- apply(
+    stlist[, c('Q2_Attendance_Rate', 'Q3_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_q4_attend <- apply(
+    stlist[, c('Q3_Attendance_Rate', 'Q4_Attendance_Rate')], 1,
+    function(x) attendance_check(x[2], x[1])
+    )
+  
+  stlist$improve_attend <- FALSE
+  
+  stlist$improve_attend <- apply(
+    stlist[, c("improve_q2_attend", "improve_q3_attend", "improve_q4_attend")], 1,
+    function(x) attend_improve_check(x[1],x[2],x[3])
+    )
+  
 
 # Ranking Students By Quintile Based on Q1 Performance -------------------------
-  #Bottom flagging students by percentiles (1/3)
 
+# Bottom flagging students by percentiles (1/3)
 
 
   stlist$grade_quintile <- 2
 
     for(row in 1:nrow(stlist)){
       
-      if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 < quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.33, na.rm = T)){
+      if(!is.na(stlist[row,]$avg.grade.Q1) &
+         stlist[row,]$avg.grade.Q1 <
+         quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1,
+                  prob = 0.33, na.rm = T)){
         
       stlist[row,]$grade_quintile <- 1
-    }
-    else if(!is.na(stlist[row,]$avg.grade.Q1) & stlist[row,]$avg.grade.Q1 > quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1, prob = 0.67, na.rm = T)){
+      }
+      
+    else if(!is.na(stlist[row,]$avg.grade.Q1) &
+            stlist[row,]$avg.grade.Q1 > 
+            quantile(stlist[stlist$School == stlist[row,]$School,]$avg.grade.Q1,
+                     prob = 0.67, na.rm = T)){
       stlist[row,]$grade_quintile <- 3
     }
 
