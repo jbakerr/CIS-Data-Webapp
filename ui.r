@@ -75,7 +75,9 @@ ui <- fluidPage(
         mainPanel(
           
          includeMarkdown("md/instructions.md"),
-         textOutput("validate_inputs")
+         textOutput("validate_inputs"),
+         br(),
+         textOutput('validate_uploads')
         )
       )
       

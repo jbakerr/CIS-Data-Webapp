@@ -8,7 +8,11 @@
 
 check_studentlist <- function(input){
   
-  if(!is.null(input$studentlist)){
+  if(file_upload_check(input) == TRUE){
+    return(FALSE)
+  }
+  
+  else if(!is.null(input$studentlist)){
     return(TRUE)
   }
   else{
@@ -154,3 +158,54 @@ attend_improve_check <- function(q2, q3, q4){
     return(FALSE)
   }
 }
+
+
+# Check For Correct Files Uploaded
+# Returns TRUE if there is an error. 
+
+file_upload_check <- function(input){
+  
+  if (!is.null(input$progress)){
+    return(file_upload_check_internals(input$progress, 'Baseline'))
+  }
+  
+  if (!is.null(input$services)){
+    return(file_upload_check_internals(input$services, 'Individual or Group'))
+  }
+  
+  
+  if (!is.null(input$caselist)){
+    return(file_upload_check_internals(input$caselist, "Initiatives"))
+  }
+  
+  if (!is.null(input$tier1)){
+    return(file_upload_check_internals(input$tier1, 'Student Level Attendance'))
+  }
+
+  if (!is.null(input$site_coordination)){
+    return(file_upload_check_internals(input$site_coordination, 'Primary Provider'))
+  }
+  
+  if (!is.null(input$studentlist)){
+    return(file_upload_check_internals(input$studentlist, 'Q1_Science'))
+  }
+  
+  else{
+    return(FALSE)
+  }
+}
+
+
+file_upload_check_internals <- function(input, validation){
+  
+    file_to_check <- input
+    nms <- names(read_excel(file_to_check$datapath, n_max = 0))
+    if(!(validation %in% nms)){
+      return(TRUE)
+    }
+    else{
+      return(FALSE)
+    }
+}
+
+incorrect_file_message <- 'ERROR! File uploaded is incorrect, please upload the correct file.'

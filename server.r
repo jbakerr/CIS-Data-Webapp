@@ -100,7 +100,6 @@ server <- function(input, output) {
     
     nms <- names(read_excel(tier1$datapath, n_max = 0))
     
-    
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
     tier1_df <- suppressWarnings(
@@ -123,7 +122,6 @@ server <- function(input, output) {
     
     nms <- names(read_excel(site_coordination$datapath, n_max = 0))
     
-    
     ct <- ifelse(grepl("Date", nms), "date", "guess")
     
     site_coordination_df <- suppressWarnings(
@@ -131,7 +129,6 @@ server <- function(input, output) {
       )
     
     site_coordination_df <- site_coordination_script(site_coordination_df)
-    
     
     
     return(site_coordination_df)
@@ -163,7 +160,7 @@ server <- function(input, output) {
   studentlist <<- getData_studentlist()
   })
 
-  
+
 # UI Display Functions ---------------------------------------------------------
   
   output$choose_school <- renderUI({
@@ -186,12 +183,19 @@ server <- function(input, output) {
   }
   )
   
-# Download Output Functions ----------------------------------------------------
+# Verify Input/Output Functions ----------------------------------------------------
   
   output$validate_inputs <- renderText({
     validate(
       need(check_studentlist(input) == TRUE, studentlist_error_code)
     )
+  })
+  
+  output$validate_uploads <- renderText({
+    
+    validate(
+    need(file_upload_check(input) != TRUE, incorrect_file_message)
+  )
   })
   
 # Download Output Functions ----------------------------------------------------
@@ -225,7 +229,7 @@ server <- function(input, output) {
   
   
   output$download_studentlist <- downloadHandler(
-
+  
   
     filename = function() {
       paste("studentlist", ".csv", sep = "")
