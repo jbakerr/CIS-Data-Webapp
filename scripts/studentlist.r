@@ -16,7 +16,7 @@ studentlist_script <- function(stlist){
   
   if (as.Date(Sys.Date()) > as.Date(paste(start_year, "-08-15", sep = "")) &
       as.Date(Sys.Date()) < as.Date(paste(start_year, "-12-31", sep = ""))){
-    start_year <- start_year 
+    start_year <- start_year
   } else{
     
     start_year <- start_year - 1
@@ -342,12 +342,12 @@ stlist$max_criteria <- pmax(
 # If a student appears in the following data set they have improved
 # the appropriate metric
   
-  improve_Math$improve_Math <- T
-  improve_Science$improve_Science <- T
-  improve_ELA$improve_ELA <- T
-  improve_elem_Math$improve_Math <- T
-  improve_elem_Science$improve_Science <- T
-  improve_elem_ELA$improve_ELA <- T
+  improve_Math$improve_Math <- logical()
+  improve_Science$improve_Science <- logical()
+  improve_ELA$improve_ELA <- logical()
+  improve_elem_Math$improve_Math <- logical()
+  improve_elem_Science$improve_Science <- logical()
+  improve_elem_ELA$improve_ELA <- logical()
 
   
 # Merging datasets
@@ -357,7 +357,7 @@ stlist$max_criteria <- pmax(
   improve_ELA <- merge(improve_ELA, improve_elem_ELA, all = T)
   improve_grades <- merge(improve_ELA, improve_Science, all = T)
   improve_grades <- merge(improve_grades, improve_Math, all = T)
-  improve_grades$improve_grades <- TRUE
+  improve_grades$improve_grades <- logical()
   
 # Setting the master file's default value to False, will get overwritten if
 # student appears in the improve_grades data frame.
