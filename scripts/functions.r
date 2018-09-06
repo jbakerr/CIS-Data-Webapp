@@ -186,9 +186,6 @@ file_upload_check <- function(input){
     return(file_upload_check_internals(input$site_coordination, 'Primary Provider'))
   }
   
-  if (!is.null(input$studentlist)){
-    return(file_upload_check_internals(input$studentlist, 'Q1_Science'))
-  }
   
   else{
     return(FALSE)

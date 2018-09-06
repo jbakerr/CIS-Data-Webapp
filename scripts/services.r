@@ -8,11 +8,15 @@ service_script <- function(data){
   
   colnames(data) <- make.names(colnames(data))
   
-  
   data <- data.frame(apply(data, 2, function(x) gsub("^$|^ $", NA, x)))
   
-  data  <- data[,colSums(is.na(data))<nrow(data)]
+
+  columns_to_drop <- colSums(is.na(data))<nrow(data)
+  columns_to_drop <- names(which(columns_to_drop == FALSE))
+  columns_to_drop <-  columns_to_drop[!grepl("Activity",unlist(columns_to_drop))]
   
+  data[,columns_to_drop] <- NULL
+
 
   
   colnames(data)[1:2] <- c("Home.School","Student.ID")
@@ -30,7 +34,7 @@ service_script <- function(data){
   
   
   d <- data %>% group_by(Home.School, Entry.Date, Support.Date, Provider.Type.1, 
-                         Activity, Student.Support.Category, Hours, Tier
+                         Activity, Student.Support.Category, Hours, Tier, Individual.or.Group
                          ) %>% summarize(groupsize = n())
   
   
