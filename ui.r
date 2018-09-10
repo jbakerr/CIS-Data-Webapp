@@ -107,9 +107,14 @@ ui <- fluidPage(
                                includeMarkdown("md/setup_explanation.md"),
                                tableOutput('setup_table')),
                              tabPanel(
-                               'Missing Grades', 
-                               includeMarkdown("md/metric_explanation.md"), 
-                               tableOutput('missing_grades_table'))
+                               'EOS Check',
+                               includeMarkdown('md/eos_explanation.md'),
+                               tableOutput('eos_table')
+                             )
+                             # tabPanel(
+                             #   'Missing Grades', 
+                             #   includeMarkdown("md/metric_explanation.md"), 
+                             #   tableOutput('missing_grades_table'))
                              
                )
              )

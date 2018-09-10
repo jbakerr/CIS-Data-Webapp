@@ -274,9 +274,10 @@ server <- function(input, output) {
     )
 
     service_list <- getData_services()
+    service_list$Support.Date <- as.Date(service_list$Support.Date)
     subseted_services <- select(
-      filter(service_list, Home.School == input$school),
-      c(Student.Support.Category, Student.Support.Name, hoursspent)
+      filter(service_list, Home.School == input$school & between(Support.Date, today() - weeks(2), today())),
+      c(Student.Support.Category, Student.Support.Name, hoursspent, Support.Date)
       )
     service_table <- aggregate(
       subseted_services$hoursspent, 
