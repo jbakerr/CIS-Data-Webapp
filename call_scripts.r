@@ -63,13 +63,13 @@ nms <- names(read_excel('services.xlsx', n_max = 0))
 
 ct <- ifelse(grepl("Date", nms), "date", "guess")
 
-services <- suppressWarnings(
+data <- suppressWarnings(
   read_excel('services.xlsx', sheet = 1,skip = 1, col_types = ct)
   )
 
 
-services <- service_script(services)
-
+services <- service_script(data)
+services$Support.Date <- as.Date(services$Support.Date)
 
 # Site Coordination ------------------------------------------------------------
 nms <- names(read_excel('site_coordination.xlsx', n_max = 0))
