@@ -320,6 +320,48 @@ server <- function(input, output) {
     missing_grades_display
   })
   
+  output$eos_table <- renderTable({
+    
+    validate(
+      need(input$services, services_error_code)
+    )
+    
+    subseted_services <- select(
+      filter(services, Home.School == input$school & between(Support.Date, today() - weeks(4), today())),
+      c(Student.ID, Student.Support.Category, Student.Support.Name, hoursspent, Support.Date)
+    )
+    
+    eos_rows <- c('Students Served', 'Hours Delivered', 'Parent Services')
+    
+    subseted_services$week <- floor_date(as.Date(subseted_services$Support.Date, "%m/%d/%Y"), unit="week")+1
+    
+    eos_columns <- unique(subseted_services$week)
+    
+    
+    
+    eos_table <- as.data.frame(matrix(,ncol = length(eos_columns), nrow = 3 ))
+    rownames(eos_table) <- eos_rows
+    colnames(eos_table) <- eos_columns
+    
+    
+    for(i in range(1:length(eos_columns))){
+      
+      eos_table[1,i] <- length(unique(subseted_services[subseted_services$week == eos_columns[i], "Student.ID"]))
+      
+      eos_table[2,i] <- sum(subseted_services[subseted_services$week == eos_columns[i], ]$hoursspent)
+      
+      eos_table[3,i] <- nrow(subseted_services[subseted_services$week == eos_columns[i] & subseted_services$Student.Support.Name == 
+                                                 'Home Visit/Parent/Care Giver Contact' , ])
+    }
+    
+    
+    
+    eos_table
+    
+    
+    
+  }, rownames = TRUE)
+  
   
 }
 
