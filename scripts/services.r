@@ -10,6 +10,8 @@ service_script <- function(data){
   
   data <- data.frame(apply(data, 2, function(x) gsub("^$|^ $", NA, x)))
   
+  
+  
 
   columns_to_drop <- colSums(is.na(data))<nrow(data)
   columns_to_drop <- names(which(columns_to_drop == FALSE))
@@ -52,6 +54,8 @@ service_script <- function(data){
 
   
   data$hoursspent <- data$Hours/data$groupsize
+  
+  data$Support.Date <- as.Date(data$Support.Date)
   
   return(data)
 
