@@ -2,14 +2,14 @@
 
 # Set Up Environment -----------------------------------------------------------
 
-library(markdown)
-library(plyr) 
-library(dplyr)
-library(tidyr)
-library(lubridate)
-library(shiny)
-library(rsconnect)
-library(readxl)
+suppressWarnings(library(markdown))
+suppressWarnings(library(plyr))
+suppressWarnings(library(dplyr))
+suppressWarnings(library(tidyr))
+suppressWarnings(library(lubridate))
+suppressWarnings(library(shiny))
+suppressWarnings(library(rsconnect))
+suppressWarnings(library(readxl))
 
 # Source Scripts ---------------------------------------------------------------
 setwd('~/Code/cis_webapp')
@@ -44,13 +44,13 @@ caselist <- caselist_script(caselist)
 
 # Progress Monitoring ----------------------------------------------------------
 
-nms <- names(read_excel('progress.xlsx', n_max = 0))
+nms <- names(read_excel('metrics.xlsx', n_max = 0))
 
 
 ct <- ifelse(grepl("Date", nms), "date", "guess")
 
 progress <- suppressWarnings(
-  read_excel('progress.xlsx', sheet = 1,skip = 0, col_types = ct)
+  read_excel('metrics.xlsx', sheet = 1,skip = 0, col_types = ct)
   )
 
 
