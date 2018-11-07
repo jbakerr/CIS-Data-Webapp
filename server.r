@@ -344,7 +344,7 @@ server <- function(input, output) {
     colnames(eos_table) <- eos_columns
     
     
-    for(i in range(1:length(eos_columns))){
+    for(i in seq(1,length(eos_columns))){
       
       eos_table[1,i] <- length(unique(subseted_services[subseted_services$week == eos_columns[i], "Student.ID"]))
       
