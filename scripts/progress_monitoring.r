@@ -81,27 +81,27 @@ progress_import_script <- function(progress){
 
 # Checking for incomplete progress monitoring settups. If a studuent is 
 # missing baseline or goal data they will be flagged as TRUE
-  progress$attend_error <- ifelse(is.na(progress$`Baseline_Attendance_Rate`) &
+  progress$attend_error <- ifelse(is.na(progress$`Baseline_Attendance_Rate`) |
                                     is.na(progress$`Target_Attendance_Rate`), 
                                   TRUE, FALSE
                                   )
   
-  progress$math_error <- ifelse(is.na(progress$Baseline_Math) & 
+  progress$math_error <- ifelse(is.na(progress$Baseline_Math) | 
                                   is.na(progress$Target_Math), 
                                 TRUE, FALSE
                                 )
   
-  progress$science_error <- ifelse(is.na(progress$Baseline_Science) & 
+  progress$science_error <- ifelse(is.na(progress$Baseline_Science) | 
                                      is.na(progress$Target_Science), 
                                    TRUE, FALSE
                                    )
   
-  progress$ELA_error <- ifelse(is.na(progress$Baseline_ELA) & 
+  progress$ELA_error <- ifelse(is.na(progress$Baseline_ELA) | 
                                  is.na(progress$Target_ELA), 
                                TRUE, FALSE
                                )
   
-  progress$suspension_error <- ifelse(is.na(progress$Baseline_Suspensions) & 
+  progress$suspension_error <- ifelse(is.na(progress$Baseline_Suspensions) | 
                                         is.na(progress$Target_Suspensions),
                                       TRUE, FALSE
                                       )
@@ -114,24 +114,25 @@ progress_import_script <- function(progress){
   progress$error <- ifelse(progress$attend_error == T |
                              progress$math_error == T | 
                              progress$science_error == T |
-                             progress$ELA_error == T,
+                             progress$ELA_error == T |
+                             progress$suspension_error == T,
                            TRUE, FALSE
                            )
 
 # Removing Baseline and Target data now that it isn't relevant
-  progress$`Baseline_Attendance_Rate` <- NULL
-  progress$Baseline_ELA <- NULL
-  progress$Baseline_Math <- NULL
-  progress$Baseline_Math2 <- NULL
-  progress$Baseline_Science <- NULL
-  progress$Baseline_Suspensions <- NULL
-
-  progress$Target_ELA <- NULL
-  progress$`Target_Attendance_Rate` <- NULL
-  progress$Target_Math <- NULL
-  progress$Target_Math2 <- NULL
-  progress$Target_Suspensions <- NULL
-  progress$Target_Science <- NULL
+  # progress$`Baseline_Attendance_Rate` <- NULL
+  # progress$Baseline_ELA <- NULL
+  # progress$Baseline_Math <- NULL
+  # progress$Baseline_Math2 <- NULL
+  # progress$Baseline_Science <- NULL
+  # progress$Baseline_Suspensions <- NULL
+  # 
+  # progress$Target_ELA <- NULL
+  # progress$`Target_Attendance_Rate` <- NULL
+  # progress$Target_Math <- NULL
+  # progress$Target_Math2 <- NULL
+  # progress$Target_Suspensions <- NULL
+  # progress$Target_Science <- NULL
 
   progress[,c(1:2, 4)] <- NULL
   progress$Student.ID <- as.character(progress$Student.ID)
