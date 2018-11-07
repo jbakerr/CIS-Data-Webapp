@@ -43,7 +43,23 @@ studentlist_script <- function(stlist){
     quarters_to_include <- 4
   }
   
-  metrics <- c("Math","Science","ELA", "Suspensions", "Attendance_Rate")
+  
+# Fixing Math 1 and Math 2 Descripancies
+  
+  # Condition 1
+  # If no Math 1, then Math 2 becomes Math 
+  
+  # Condition 2
+  # If Math 1 and Math 2, AND, Math 2 Q1-4 is NA, then Math 1 becomes Math 
+  
+  # Condition 3
+  # If Math 1 and Math 2, AND, Math 1 Q1-4 is NA, then Math 2 becomes Math
+  
+  # Condition 4
+  # If Math 1 and Math 2, AND, Math 1 and Math 2 Q1-4 have values, them 
+  # Math is average between Math 1 and Math 2 
+  
+  metrics <- c("Math", "Math2", "Science","ELA", "Suspensions", "Attendance_Rate")
   
   elem <- c(
     "Glenn Elementary School", "Eno Valley Elementary", 
