@@ -1,11 +1,11 @@
 ################################# Server  ######################################
 # Set up Environment -----------------------------------------------------------
-library(plyr)
-library(dplyr)
-library(tidyr)
-library(lubridate)
-library(shiny)
-library(readxl)
+suppressWarnings(library(plyr))
+suppressWarnings(library(dplyr))
+suppressWarnings(library(tidyr))
+suppressWarnings(library(lubridate))
+suppressWarnings(library(shiny))
+suppressWarnings(library(readxl))
 
 
 # Pull additional scripts to be used during process ----------------------------
