@@ -309,7 +309,7 @@ server <- function(input, output) {
       )
     
     missing_grades_display <- select(filter(
-      studentlist, School == input$school & no_metrics == TRUE),
+      studentlist, School == input$school & no_metrics == TRUE & Enrollment.Status != "Exited"),
       c(Student, no_metrics_Q1, 
         no_metrics_Q2, no_metrics_Q3, no_metrics_Q4)
       )

@@ -11,8 +11,8 @@ tier1_script <- function(tier1){
   
   tier1 <- tier1[!is.na(tier1$School), ]
   
-  colnames(tier1)[15:18] <- c(
-    "students_served", "parents_served", "other_served", "volunteers"
+  colnames(tier1)[14:15] <- c(
+    "students_served", "other_served"
     )
   
   return(tier1)
