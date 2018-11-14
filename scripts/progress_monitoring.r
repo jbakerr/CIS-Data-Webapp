@@ -10,7 +10,7 @@ progress_import_script <- function(progress){
   colnames(progress) <- make.names(colnames(progress))
   
 # Setting Vectors that will be used throughout program
-  metrics <- c("Math", "Math2", "Science","ELA", "Suspensions", "Attendance_Rate")
+  metrics <- c("Math1", "Math2", "Science","ELA", "Suspensions", "Attendance_Rate")
   
   elem <- c(
     "Glenn Elementary School", "Eno Valley Elementary",
@@ -29,7 +29,7 @@ progress_import_script <- function(progress){
 # Changing Metric Title - make sure that the first section in quotes is 
 # exactly as found in the excel file. 
   progress$Metric[progress$Metric =='Core Course Grades: Eng/Lang Arts/Reading/Writing'] <- "ELA"
-  progress$Metric[progress$Metric =='Core Course Grades: Math 1'] <- "Math"
+  progress$Metric[progress$Metric =='Core Course Grades: Math 1'] <- "Math1"
   progress$Metric[progress$Metric =='Core Course Grades: Math 2'] <- "Math2"
   progress$Metric[progress$Metric =='Core Course Grades: Science'] <- "Science"
   progress <- progress[ ! (progress$Metric =='Standardized test score: English / Language Arts'),]
@@ -79,15 +79,21 @@ progress_import_script <- function(progress){
   progress <- spread(progress[, ! colnames(progress) %in% 
                                 c("Metric", "Period")], quartersubject, Value)
 
+
+  
+
+  
 # Checking for incomplete progress monitoring settups. If a studuent is 
 # missing baseline or goal data they will be flagged as TRUE
+  
+  
   progress$attend_error <- ifelse(is.na(progress$`Baseline_Attendance_Rate`) |
                                     is.na(progress$`Target_Attendance_Rate`), 
                                   TRUE, FALSE
                                   )
   
-  progress$math_error <- ifelse(is.na(progress$Baseline_Math) | 
-                                  is.na(progress$Target_Math), 
+  progress$math_error <- ifelse(is.na(progress$Baseline_Math1) | 
+                                  is.na(progress$Target_Math1), 
                                 TRUE, FALSE
                                 )
   
@@ -136,6 +142,35 @@ progress_import_script <- function(progress){
 
   progress[,c(1:2, 4)] <- NULL
   progress$Student.ID <- as.character(progress$Student.ID)
+  
+  # Convering Columns to Numneric
+  
+  progress[, c(2:37)] <- sapply(progress[, c(2:37)], as.numeric)
+  
+  # Create Math metrics that combines Math 1 and Math 2 if needed
+  
+  progress$Q1_Math <- NA
+  progress$Q2_Math <- NA
+  progress$Q3_Math <- NA
+  progress$Q4_Math <- NA
+  
+  progress$Q1_Math <- ifelse(is.na(progress$Baseline_Math2),progress$Q1_Math1, progress$Q1_Math)
+  progress$Q2_Math <- ifelse(is.na(progress$Baseline_Math2),progress$Q2_Math1, progress$Q2_Math)
+  progress$Q3_Math <- ifelse(is.na(progress$Baseline_Math2),progress$Q3_Math1, progress$Q3_Math)
+  progress$Q4_Math <- ifelse(is.na(progress$Baseline_Math2),progress$Q4_Math1, progress$Q4_Math)
+    
+  
+  progress$Q1_Math <- ifelse(is.na(progress$Q1_Math) & is.na(progress$Baseline_Math1),progress$Q1_Math2, progress$Q1_Math)
+  progress$Q2_Math <- ifelse(is.na(progress$Q2_Math) & is.na(progress$Baseline_Math1),progress$Q2_Math2, progress$Q2_Math)
+  progress$Q3_Math <- ifelse(is.na(progress$Q3_Math) & is.na(progress$Baseline_Math1),progress$Q3_Math2, progress$Q3_Math)
+  progress$Q4_Math <- ifelse(is.na(progress$Q4_Math) & is.na(progress$Baseline_Math1),progress$Q4_Math2, progress$Q4_Math)
+  
+  
+  progress$Q1_Math <- ifelse(
+    is.na(progress$Q1_Math) & (
+      !is.na(progress$Baseline_Math1) & !is.na(progress$Baseline_Math2)), (progress$Q1_Math1 + progress$Q1_Math2)/2, progress$Q1_Math)
+  
+    
 
   return(progress)
   
