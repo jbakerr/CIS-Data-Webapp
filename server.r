@@ -325,9 +325,10 @@ server <- function(input, output) {
     validate(
       need(input$services, services_error_code)
     )
-    
+    service_list <- getData_services()
+    service_list$Support.Date <- as.Date(service_list$Support.Date)
     subseted_services <- select(
-      filter(services, Home.School == input$school & between(Support.Date, today() - weeks(4), today())),
+      filter(service_list, Home.School == input$school & between(Support.Date, today() - weeks(4), today())),
       c(Student.ID, Student.Support.Category, Student.Support.Name, hoursspent, Support.Date)
     )
     
