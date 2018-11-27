@@ -89,7 +89,7 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  uiOutput("choose_school")
-               ),
+                          ),
 # Reports Main Panel UI---------------------------------------------------------
                mainPanel(
 # Reports Main Panel Tabs UI----------------------------------------------------
@@ -114,13 +114,18 @@ ui <- fluidPage(
                              tabPanel(
                                'Missing Grades',
                                includeMarkdown("md/metric_explanation.md"),
-                               tableOutput('missing_grades_table'))
+                               tableOutput('missing_grades_table')),
+                             tabPanel(
+                               'Quarterly Report',
+                               downloadButton("report", "Generate report")
+                               
+                             )
 
-               )
-             )
-             
-    )
-    )
-  )
+                          )
+                        )
+                      )
+              )
+
+)
 )
 )

@@ -1,0 +1,11 @@
+---
+title: "Quarterly Report"
+output: pdf_document
+params:
+  school: NA
+---
+
+```{r}
+# The `params` object is available in the document.
+params$school
+```
