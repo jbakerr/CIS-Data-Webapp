@@ -6,6 +6,9 @@ suppressWarnings(library(tidyr))
 suppressWarnings(library(lubridate))
 suppressWarnings(library(shiny))
 suppressWarnings(library(readxl))
+suppressWarnings(library(rmarkdown))
+suppressWarnings(library(tinytex))
+
 
 
 # Pull additional scripts to be used during process ----------------------------
@@ -365,25 +368,20 @@ server <- function(input, output) {
   
   
   output$report <- downloadHandler(
-    # For PDF output, change this to "report.pdf"
-    filename = "report.pdf",
+    filename = 'report.pdf',
+    
     content = function(file) {
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
-      tempReport <- file.path(tempdir(), "quarterly_report.Rmd")
-      file.copy("quarterly_report.Rmd", tempReport, overwrite = TRUE)
+      src <- normalizePath('quarterly_report.Rmd')
       
-      # Set up parameters to pass to Rmd document
-      params <- list(school = input$school)
+      # temporarily switch to the temp dir, in case you do not have write
+      # permission to the current working directory
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      file.copy(src, 'quarterly_report.Rmd', overwrite = TRUE)
       
-      # Knit the document, passing in the `params` list, and eval it in a
-      # child of the global environment (this isolates the code in the document
-      # from the code in this app).
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-      )
+      out <- render('quarterly_report.Rmd')
+      
+      file.rename(out, file)
     }
   )
   
